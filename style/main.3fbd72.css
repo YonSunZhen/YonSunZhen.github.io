@@ -44,6 +44,7 @@ h2, h3, h4 {
   width: 256px;
   background-size: cover;
   position: fixed;
+  z-index: 2;
   top: 0;
   bottom: 0;
   padding: 50px 30px 80px;
@@ -113,6 +114,7 @@ h2, h3, h4 {
   .right-aside .right-nav {
     padding-left: 40px;
     position: fixed;
+    z-index: 2;
     top: 0;
     width: 100%;
     border-bottom: 1px solid #d9d9d9;
@@ -172,14 +174,17 @@ h2, h3, h4 {
         right: 26px; }
 
 .right-main {
-  margin-top: 58px;
+  margin-top: 44px;
   padding-left: 40px;
-  float: left; }
+  float: left; 
+  position: relative;
+  z-index: 1;
+  background-color: #fff;}
 
 .category li {
   list-style: none;
   float: left;
-  margin: 10px 0px 5px 10px; }
+  margin: 25px 0px 5px 10px; }
   .category li a {
     padding: 5px 11px;
     border: 1px solid #d9d9d9;
