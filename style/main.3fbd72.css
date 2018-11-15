@@ -172,8 +172,6 @@ h2, h3, h4 {
         right: 26px; }
 
 .right-main {
-  /* position: relative; */
-  /* z-index: 10; */
   margin-top: 58px;
   padding-left: 40px;
   float: left; }
@@ -324,8 +322,6 @@ h2, h3, h4 {
   margin: 0 auto; }
 
 .article {
-  /* position: relative; */
-  /* z-index: 100; */
   padding: 0px 30px 20px 20px;
   word-break: break-word; }
   .article h1 {
