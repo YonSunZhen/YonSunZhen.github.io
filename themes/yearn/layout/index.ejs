@@ -10,7 +10,7 @@
             <% for (var i in theme.subnav){ %>
             <li>
                 <a class="<%= i %>" target="_blank" href="<%- url_for(theme.subnav[i]) %>" title="<%= i %>">
-                    <img src="<%= config.root %>./img/icon-<%= i %>.png" alt="<%= i %>" data-tooltip="<%= i %>">
+                  <img src="<%= config.root %>./img/icon-<%= i %>.png" alt="<%= i %>" data-tooltip="<%= i %>">
                 </a>
             </li>
             <%}%>
@@ -86,6 +86,6 @@
   }
 </script>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<script src="<%= config.root %>./js/canvas-nest.js"></script>
+<!-- <script src="<%= config.root %>./js/canvas-nest.js"></script> -->
 </script>
 <%- partial('_partial/script.ejs') %>
