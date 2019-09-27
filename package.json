@@ -5,6 +5,13 @@
   "hexo": {
     "version": "3.8.0"
   },
+  "scripts": {
+    "new": "hexo new",
+    "clean": "hexo clean",
+    "start": "hexo clean && hexo deploy -g",
+    "deploy": "hexo deploy -g",
+    "server": "hexo clean && hexo generate && hexo server"
+  },
   "dependencies": {
     "hexo": "^3.7.0",
     "hexo-asset-image": "git+https://github.com/7ym0n/hexo-asset-image.git",
