@@ -26,13 +26,13 @@ avatar: https://tva3.sinaimg.cn/crop.0.0.200.200.180/005Kc3C1jw8f2uep0hhkvj305k0
 # 首页左侧边栏背景图片(在本地的)
 # 可配置多个随机挑选一张
 leftBackground:
-  - ./img/left-1.jpg
-  - ./img/left-2.jpg
-  - ./img/left-3.jpg
-  - ./img/left-4.jpg
-  - ./img/left-5.jpg
-  - ./img/left-6.jpg
-  - ./img/left-7.jpg
+  - https://yonsunzhen.github.io/img/left-1.jpg
+  - https://yonsunzhen.github.io/img/left-2.jpg
+  - https://yonsunzhen.github.io/img/left-3.jpg
+  - https://yonsunzhen.github.io/img/left-4.jpg
+  - https://yonsunzhen.github.io/img/left-5.jpg
+  - https://yonsunzhen.github.io/img/left-6.jpg
+  - https://yonsunzhen.github.io/img/left-7.jpg
 
 # 展示更新时间
 display_updated: true
