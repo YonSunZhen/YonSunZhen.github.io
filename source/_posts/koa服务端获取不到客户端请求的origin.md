@@ -27,7 +27,8 @@ module.exports = async function (ctx, next) {
 ```
 
 ## 原因
-<font size=3>客户端请求服务端接口是在本地电脑环境(非服务器环境),然而origin字段记录的是我发起http请求的域名URL,由于我是在本地进行访问的,肯定也就不存在域名URL了。</font>
+<font size=3>客户端请求服务端接口是在本地电脑环境(非服务器环境),然而origin字段记录的是我发起http请求的域名URL,由于我是在本地进行访问的,肯定也就不存在域名URL了。
+</font>
 
 ## 解决
 
