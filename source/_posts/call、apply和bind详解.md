@@ -38,6 +38,24 @@ foo.apply(obj, [1995, 'china']); // syc is 1995 born from china
 ```
 <font size=3> apply方法和call方法的区别就是apply中第二个参数接受的是一个数组。</font> 
 
+### **call和apply的作用**
+<font size=3>1、**一个重要的作用就是扩充函数赖以运行的作用域；**</font>
+
+```js
+window.color = "red"；
+let o = {
+    color: "blue"
+};
+function sayColor() {
+    console.log(this.color);
+}
+sayColor(); //red
+sayColor.call(this); //red 因为在全局环境下调用函数 this默认指向window
+sayColor.call(window); //red this指向window
+sayColor.call(o); //blue this指向o对象
+```
+<font size=3>使用call和apply来扩充作用域的最大好处，就是对象不需要和方法有任何耦合关系，调用者控制this的指向，就可以实现不同的功能。</font>
+
 ## bind
 <font size=3>1、用法：`foo.bind(obj, arg1, arg2, ...)`  -> **返回一个函数，该函数永久地改变this的指向；** </font>   
 
