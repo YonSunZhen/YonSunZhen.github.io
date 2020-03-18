@@ -415,7 +415,7 @@ h2, h3, h4 {
     .article .content ol li {
       list-style-type: decimal; }
   .article .content table {
-    width: 100%;
+    /* width: 100%; */
     border: 1px #E6E6E6 solid;
     border-collapse: collapse; }
   .article .content th {

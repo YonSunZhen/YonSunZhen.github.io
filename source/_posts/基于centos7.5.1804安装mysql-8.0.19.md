@@ -2,6 +2,7 @@
 title: 基于centos7.5.1804安装mysql-8.0.19
 date: 2020-03-18 10:41:00
 tags:
+categories: 后端
 ---
 ## 详细过程  
 1、MySql官网下载安装包。[点击下载](https://dev.mysql.com/downloads/mysql/)
@@ -27,9 +28,7 @@ chmod 777 ./mysql_install_db
 ```
 bin/mysqld --initialize --user=mysql --basedir=/usr/local/mysql8 --datadir=/usr/local/mysql8/data
 /usr/local/mysql8/bin/mysqld (mysqld 8.0.11) initializing of server in progress as process 5826
-
- [Server] A temporary password is generated for root@localhost: twi=Tlsi<0O!
- 
+[Server] A temporary password is generated for root@localhost: twi=Tlsi<0O!
 /usr/local/mysql/bin/mysqld (mysqld 8.0.11) initializing of server has completed
 ```
 记录自己的临时密码 `twi=Tlsi<0O!`
