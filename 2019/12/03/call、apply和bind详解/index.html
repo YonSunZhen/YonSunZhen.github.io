@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="keywords" content="hexo,个人博客,blog">
+  <meta name="description" content="某某的个人博客">
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://busuanzi.ibruce.info">
+  
+  <link rel="dns-prefetch" href="https://widget.daovoice.io">
+  <link rel="dns-prefetch" href="https://widget-static-cdn.daovoice.io">
+  <link rel="dns-prefetch" href="https://im.daovoice.io">
+  
+  
+  <link rel="dns-prefetch" href="https://hm.baidu.com/">
+  
+  
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://api.github.com">
+  <link rel="dns-prefetch" href="https://avatars3.githubusercontent.com">
+  
+  <link rel="stylesheet" type="text/css" href="/./style/main.3fbd72.css">
+	<link rel="shortcut icon" href="/favicon.ico" title="Favicon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+	<title>call、apply和bind详解</title>
+  
+  <script>var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?1b5ca8bbd5cf95a2263942c7c20476d9";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();
+  </script>
+  
+  
+    <script>(function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/123456.js","daovoice");daovoice('init',{app_id: "123456"});daovoice('update');
+  </script>
+  
+</head>
+<body>
+<canvas id="pattern-placeholder" height="230"></canvas>
+<div class="navbar-header">
+  <a class="blog-title" href="/">码上就来</a>
+  <a class="face-img" href="/">
+    <img src="https://tva3.sinaimg.cn/crop.0.0.200.200.180/005Kc3C1jw8f2uep0hhkvj305k05k3yk.jpg">
+  </a>
+</div>
+<main>
+  <div class="article-title">
+    
+  
+  <h1 class="title">
+    call、apply和bind详解
+  </h1>
+  
+
+
+    <ul class="article-info">
+      <li>
+        发布
+        <time datetime="2019-12-03T12:46:55.000Z" itemprop="datePublished">2019-12-03</time>
+      </li>
+      <li>
+        
+    更新 <time datetime="2020-03-18T12:25:10.493Z" itemprop="dateUpdated">2020-03-18</time>
+
+      </li>
+      <li id="busuanzi_container_page_pv">
+        阅读 <span id="busuanzi_value_page_pv"></span>
+      </li>
+    </ul>
+  </div>
+  <div class="container">
+    <div class="article">
+      <div class="content">
+        <h2>call和apply</h2>
+<h3><strong>call</strong></h3>
+<p><font size="3">1、用法：<code>foo.call(obj, arg1, arg2, ...)</code> -&gt; <strong>主要用于改变this的指向</strong>；</font></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">year, place</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.name+<span class="string">" is "</span>+year+<span class="string">" born from "</span>+place);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">window</span>.name = <span class="string">'syz'</span>;</span><br><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'syc'</span></span><br><span class="line">&#125;</span><br><span class="line">foo(<span class="number">1995</span>, <span class="string">'china'</span>); <span class="comment">// syz is 1995 born from china</span></span><br><span class="line">foo.call(obj, <span class="number">1995</span>, <span class="string">'china'</span>); <span class="comment">// syc is 1995 born from china</span></span><br></pre></td></tr></table></figure>
+<p><font size="3"> 首先我们要知道，每个函数中的this是在调用时绑定的，this指向哪里，完全取决于函数的调用位置。比如上面，我们先执行了<code>foo()</code> ，基于我们调用这个函数的位置,如果我们在浏览器中运行的话（一般都是），此时this指向的是window，所以这时候this.name = syz;<br>
+那如果我们想要让 this.a = obj.name 的话，就可以使用call来显式绑定this的指向。</font></p>
+<h3><strong>apply</strong></h3>
+<p><font size="3">1、用法：<code>obj.apply(thisObj, [arg1, arg2, ...])</code> -&gt; <strong>主要用于改变this的指向</strong>；</font></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">year, place</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.name+<span class="string">" is "</span>+year+<span class="string">" born from "</span>+place);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">window</span>.name = <span class="string">'syz'</span>;</span><br><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'syc'</span></span><br><span class="line">&#125;</span><br><span class="line">foo(<span class="number">1995</span>, <span class="string">'china'</span>); <span class="comment">// syz is 1995 born from china</span></span><br><span class="line">foo.apply(obj, [<span class="number">1995</span>, <span class="string">'china'</span>]); <span class="comment">// syc is 1995 born from china</span></span><br></pre></td></tr></table></figure>
+<p><font size="3"> apply方法和call方法的区别就是apply中第二个参数接受的是一个数组。</font></p>
+<h3><strong>call和apply的作用</strong></h3>
+<p><font size="3">1、<strong>一个重要的作用就是扩充函数赖以运行的作用域；</strong></font></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">window</span>.color = <span class="string">"red"</span>；</span><br><span class="line"><span class="keyword">let</span> o = &#123;</span><br><span class="line">    color: <span class="string">"blue"</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sayColor</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">this</span>.color);</span><br><span class="line">&#125;</span><br><span class="line">sayColor(); <span class="comment">//red</span></span><br><span class="line">sayColor.call(<span class="keyword">this</span>); <span class="comment">//red 因为在全局环境下调用函数 this默认指向window</span></span><br><span class="line">sayColor.call(<span class="built_in">window</span>); <span class="comment">//red this指向window</span></span><br><span class="line">sayColor.call(o); <span class="comment">//blue this指向o对象</span></span><br></pre></td></tr></table></figure>
+<p><font size="3">使用call和apply来扩充作用域的最大好处，就是对象不需要和方法有任何耦合关系，调用者控制this的指向，就可以实现不同的功能。</font></p>
+<h2>bind</h2>
+<p><font size="3">1、用法：<code>foo.bind(obj, arg1, arg2, ...)</code>  -&gt; <strong>返回一个函数，该函数永久地改变this的指向；</strong> </font></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">year, place</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="keyword">this</span>.name+<span class="string">" is "</span>+year+<span class="string">" born from "</span>+place);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">window</span>.name = <span class="string">'syz'</span>;</span><br><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">  name: <span class="string">'syc'</span></span><br><span class="line">&#125;</span><br><span class="line">foo(<span class="number">1995</span>, <span class="string">'china'</span>); <span class="comment">// syz is 1995 born from china</span></span><br><span class="line"><span class="keyword">let</span> haha = foo.bind(obj, <span class="number">1995</span>, <span class="string">'china'</span>); </span><br><span class="line">haha(); <span class="comment">// syc is 1995 born from china</span></span><br></pre></td></tr></table></figure>
+<p><font size="3"> bind类似于call，但是call和apply会立即执行，而bind是返回绑定this之后的函数(永久地改变this的指向，原函数不变)。</font></p>
+<h2>apply、call、bind三者的区别</h2>
+<ul>
+<li><font size="3">三者都可以改变函数的this的指向；</font></li>
+<li><font size="3">三者第一个参数都是this要指向的对象，如果没有这个参数或参数为undefined或null，则默认指向全局window。</font></li>
+<li><font size="3">三者都可以传参，但是call和bind是参数列表，apply是数组。</font></li>
+<li><font size="3">bind是返回绑定this之后的函数，便于稍后调用；apply和call则是立即执行。</font></li>
+</ul>
+
+      </div>
+        <div class="support-author">
+          <p>感谢您的阅读。 🙏
+          <a href="https://888.com/index.html" target="_blank">关于转载请看这里</a>
+            <!--<a class="btn-pay"  href="#pay-modal">¥ 打赏支持</a>-->
+          </p>
+        </div>
+        <!--
+            <div class="like ">
+              <div class="like-button">
+                <a id="like-note" href="">
+                  <i class="icon-heart"></i>喜欢
+                </a>
+              </div>
+              <span id="likes-count">256</span>
+            </div>
+        -->
+        <div class="otherLink">
+          <div class="previous">
+          </div>
+          <div class="next">
+          </div>
+        </div>
+        <div class="comments" id="comments">
+          
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="/js/md5.min.js"></script>
+<script type="text/javascript">
+  const gitalk = new Gitalk({
+    clientID: '4008c278909d8497d8ad',
+    clientSecret: 'e27df4736052523348bbf856ba03e1d350143b93',
+    repo: 'YonSunZhen.github.io',
+    owner: 'YonSunZhen',
+    admin: ['YonSunZhen'],
+    id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false
+  })
+
+  gitalk.render('comments');
+</script>
+
+
+        </div>
+      </div>
+    </div>
+   
+</main>
+<div class="footer">
+  <div class="info">
+    <p>
+    <a href="https://hexo.io"> Hexo </a> 强力驱动 666|
+      <a href="https://github.com/Youthink/hexo-themes-yearn"> Yearn </a>
+      主题
+    </p>
+    <p>&copy;2013-2019 某某的博客 京ICP备xxxxxx号</p>
+  </div>
+</div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- <script src="/./js/canvas-nest.js"></script> -->
+
+<script type="text/javascript" src="/./js/main.3fbd72.js"></script>
+
+</body>
+</html>
