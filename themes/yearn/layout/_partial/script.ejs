@@ -1,10 +1,11 @@
+<script type="text/javascript" src="<%=config.root%>./js/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="<%=config.root%>./js/main.3fbd72.js"></script>
 <!-- if CDN fails, use local file -->
 <script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
-<script> window.mermaid || document.write('<script src="/js/mermaid.min.js"><\/script>')</script>
+<script> window.mermaid || document.write('<script src="<%=config.root%>./js/mermaid.min.js"><\/script>')</script>
 <script>mermaid.initialize({ startOnLoad: true });</script>
 <% if (theme.mermaid.enable) { %>
-<%- js('assets/js/mermaid.min.js') %>
+<!-- <%- js('assets/js/mermaid.min.js') %> -->
 <script>
   $(document).ready(function () {
     var mermaid_config = {

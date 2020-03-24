@@ -93,5 +93,5 @@ jsonContent:
 mermaid:
   enable: true
   # Available themes: default | dark | forest | neutral
-  theme: default
+  theme: dark
 
