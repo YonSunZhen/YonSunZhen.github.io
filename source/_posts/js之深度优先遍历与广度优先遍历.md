@@ -42,7 +42,7 @@ graph LR;
 ```
 ## 代码实现
 1、现有如下树结构数据
-```
+```js
 const tree = {
   data: { no: 1 },
   children: [
@@ -69,7 +69,7 @@ const tree = {
 }
 ```
 * 深度优先遍历 采用递归遍历的方式
-```
+```js
 function breadthFirst (data) {
   let result = [];
   result.push(data.data.no);
@@ -84,7 +84,7 @@ function breadthFirst (data) {
 }
 ```
 * 广度优先遍历 采用队列的方式 先进先出
-```
+```js
 function depthFirst (data) {
   let result = [];
   let queue = data;
