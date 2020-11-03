@@ -36,7 +36,7 @@ const obj = {
 foo(1995, 'china'); // syz is 1995 born from china
 foo.apply(obj, [1995, 'china']); // syc is 1995 born from china
 ```
-<font size=3> apply方法和call方法的区别就是apply中第二个参数接受的是一个数组。</font> 
+<font size=3> apply方法和call方法的区别就是apply中第二个参数接受的是一个数组。当函数的参数数量不明确时就可以使用apply来改变this的指向，有点类似扩展运算符`...`的效果。</font> 
 
 ### **call和apply的作用**
 <font size=3>1、**一个重要的作用就是扩充函数赖以运行的作用域；**</font>
