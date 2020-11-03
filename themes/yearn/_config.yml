@@ -26,9 +26,10 @@ avatar: https://tva3.sinaimg.cn/crop.0.0.200.200.180/005Kc3C1jw8f2uep0hhkvj305k0
 # 首页左侧边栏背景图片(在本地的)
 # 可配置多个随机挑选一张
 leftBackground:
-  - http://122.51.184.238/storage/api/v1/1_3_博客/2_4_bg1.jpeg
-  - http://122.51.184.238/storage/api/v1/1_3_博客/2_6_bg3.jpeg
-  - http://122.51.184.238/storage/api/v1/1_3_博客/2_7_bg4.jpeg
+  - http://122.51.184.238/storage/api/v1/1_2_博客/2_2_bg2.jpeg
+  - http://122.51.184.238/storage/api/v1/1_2_博客/2_3_bg3.jpeg
+  - http://122.51.184.238/storage/api/v1/1_2_博客/2_4_bg4.jpeg
+  - http://122.51.184.238/storage/api/v1/1_2_博客/2_6_bg6.jpeg
 # 展示更新时间
 display_updated: true
 
