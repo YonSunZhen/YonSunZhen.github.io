@@ -5,23 +5,24 @@ menu:
   关于我: haha
 subnav:
   github: "https://github.com/YonSunZhen"
-  weibo: "http://weibo.com/u/5263249441"
+  # weibo: "http://weibo.com/u/5263249441"
   #zhihu: "https://www.zhihu.com/people/hu-yang-11-57/"
-  email: "mailto:hufy78@gmail.com"
-  sf: "https://segmentfault.com/u/youthink"
+  email: "mailto:1315976441@qq.com"
+  sf: "https://segmentfault.com/u/_5bf4c360ce464"
   #youthol: "http://www.youthol.cn"
-  rss: "/atom.xml"
+  # rss: "/atom.xml"
 
 description: 天马行空，爱生活，爱coding
 
 # SEO
 seo_keywords: hexo,个人博客,blog
-seo_description: 某某的个人博客
+seo_description: 孙永镇个人博客
 
-favicon: /favicon.ico
+# 网站icon
+favicon: http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg
 
 #你的头像url
-avatar: https://tva3.sinaimg.cn/crop.0.0.200.200.180/005Kc3C1jw8f2uep0hhkvj305k05k3yk.jpg
+avatar: http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg
 
 # 首页左侧边栏背景图片(在本地的)
 # 可配置多个随机挑选一张
@@ -37,8 +38,8 @@ display_updated: true
 copyright_url: https://888.com/index.html
 
 # 底部的备案信息等
-copyright_date: 2013-2019
-beian_info: 某某的博客 京ICP备xxxxxx号
+copyright_date: 
+beian_info: YonSunZhen的个人博客 粤ICP备18135123号
 
 # Online contact
 daovoice: true

@@ -1,12 +1,15 @@
-<div style="height: 1087px;">
+<div style="height: 100%;">
   <div class="left-aside">
-    <div class="face-img"><img src="<%= config.root %>./img/avatar.jpg"></div>
+    <div class="face-img">
+      <!-- <img src="<%= config.root %>./img/avatar.jpg"> -->
+      <img src="<%= theme.avatar %>" alt="">
+    </div>
     <div class="intro-word">
         <h2><%=theme.author%> </h2>
         <p><%=theme.description%></p>
     </div>
-    <div class="sns">
-        <ul>
+    <div class="sns" style="width: 256px;">
+        <ul style="width: 153px; margin: 0 auto;">
             <% for (var i in theme.subnav){ %>
             <li>
                 <a class="<%= i %>" target="_blank" href="<%- url_for(theme.subnav[i]) %>" title="<%= i %>">
@@ -57,7 +60,7 @@
                   <%- partial('_partial/paginator') %>
               </div>
           </div>
-          <div class="clear"></div>
+          <!-- <div class="clear"></div>
           <div class="hosted">
             <ul>
               <li class="coding">
@@ -71,7 +74,7 @@
                 </a>
               </li>
             </ul>
-          </div>
+          </div> -->
       </div>
       <div class="clear"></div>
   </div>
