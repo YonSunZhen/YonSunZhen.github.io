@@ -22,7 +22,7 @@
     "copy-webpack-plugin": "^5.1.1",
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
-    "html-webpack-plugin": "^3",
+    "html-webpack-plugin": "^5",
     "node-sass": "^4.5.3",
     "postcss-loader": "^2.0.6",
     "sass-loader": "^7",
