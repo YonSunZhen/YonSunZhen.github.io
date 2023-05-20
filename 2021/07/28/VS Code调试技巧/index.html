@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="keywords" content="hexo,个人博客,blog" />
+  <meta name="description" content="孙永镇个人博客" />
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://busuanzi.ibruce.info">
+  
+  <link rel="dns-prefetch" href="https://widget.daovoice.io">
+  <link rel="dns-prefetch" href="https://widget-static-cdn.daovoice.io">
+  <link rel="dns-prefetch" href="https://im.daovoice.io">
+  
+  
+  <link rel="dns-prefetch" href="https://hm.baidu.com/">
+  
+  
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://api.github.com">
+  <link rel="dns-prefetch" href="https://avatars3.githubusercontent.com">
+  
+  <link rel="stylesheet" type="text/css" href="/./style/main.4a9772.css">
+	<link rel="shortcut icon" href="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg" title="Favicon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+	<title>VS Code调试技巧</title>
+  
+  <script>var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?1b5ca8bbd5cf95a2263942c7c20476d9";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();
+  </script>
+  
+  
+    <script>(function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/123456.js","daovoice");daovoice('init',{app_id: "123456"});daovoice('update');
+  </script>
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+<body>
+<canvas id="pattern-placeholder" height="230"></canvas>
+<div class="navbar-header">
+  <a class="blog-title" href="/">码上就来</a>
+  <a class="face-img" href="/">
+    <img src="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg">
+  </a>
+</div>
+<main>
+  <div class="article-title">
+    
+  
+  <h1 class="title">
+    VS Code调试技巧
+  </h1>
+  
+
+
+    <ul class="article-info">
+      <li>
+        发布
+        <time datetime="2021-07-28T11:09:35.000Z" itemprop="datePublished">2021-07-28</time>
+      </li>
+      <li>
+        
+    更新 <time datetime="2023-05-18T14:27:34.595Z" itemprop="dateUpdated">2023-05-18</time>
+
+      </li>
+      <li id="busuanzi_container_page_pv">
+        阅读 <span id="busuanzi_value_page_pv"></span>
+      </li>
+    </ul>
+  </div>
+  <div class="container">
+    <div class="article">
+      <div class="content">
+        <h2 id="launch文件解读">launch文件解读</h2>
+<h3 id="必选属性：">必选属性：</h3>
+<p><strong>1. type</strong>：启动配置的调试器的类型，以下为vs code提供的内置类型，还有一些类似于<code>pwa-node</code>，<code>pwa-chrome</code>是依靠插件提供的</p>
+<ul>
+<li>node</li>
+<li>php</li>
+<li>go</li>
+<li>chrome</li>
+</ul>
+<p><strong>2. request</strong>：启动配置的请求类型，目前支持的是 <code>launch</code> 和 <code>attach</code></p>
+<ul>
+<li>launch：启动 – 多用于对没启动的程序的处理</li>
+<li>attach：附加 – 多用于对已经启动的程序的处理</li>
+</ul>
+<p><strong>3. name</strong>: 自定义名称，用于区分不同的调试配置（显示在“调试启动配置”下拉列表中）</p>
+<h3 id="常见可选属性">常见可选属性</h3>
+<p><strong>1. presentation</strong> ：呈现方式（在调试启动配置下的呈现方式）</p>
+<ul>
+<li>order：排序位置</li>
+<li>hidden：是否隐藏</li>
+<li>group：分组</li>
+</ul>
+<p><strong>2. preLaunchTask</strong> ：在调试会话开始之前启动一个任务<br>
+<strong>3. postDebugTask</strong> ：在调试会话的最后启动的一个任务<br>
+<strong>4. internalConsoleOptions</strong> ：此属性控制调试会话期间调试控制台面板的可见性</p>
+<ul>
+<li>neverOpen：从不打开</li>
+<li>openOnSessionStart：启动会话时打开</li>
+<li>openOnFirstSessionStart：启动第一个会话时打开</li>
+</ul>
+<h3 id="部分可选属性">部分可选属性</h3>
+<p><strong>1. program</strong> ：启动调试器时要运行的文件<br>
+<strong>2. args</strong> ：传递给程序的参数<br>
+<strong>3. env</strong> ：环境变量<br>
+<strong>4. envFile</strong>： 环境变量文件的路径<br>
+<strong>5. cwd</strong>：用于查找依赖项和其他文件的当前工作目录<br>
+<strong>6. port</strong> ：连接到正在运行的进程时的端口<br>
+<strong>7. stopOnEntry</strong> ：当程序启动时立即中断<br>
+<strong>8. console</strong> ：使用<code>console</code>的方式</p>
+<ul>
+<li>internalConsole</li>
+<li>integratedTerminal</li>
+<li>externalTerminal</li>
+</ul>
+<h3 id="一些变量-文档">一些变量 <a target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/editor/variables-reference">文档</a></h3>
+<ul>
+<li><code>$&#123;workspaceFolder&#125;</code>：工作空间文件夹的根路径</li>
+<li><code>$&#123;file&#125;</code>：编辑器<strong>当前窗口打开的文件</strong>的路径</li>
+</ul>
+<h2 id="调试nodejs">调试nodejs</h2>
+<p>注：调试nodejs时不能使用<code>ES Module</code>（<code>import</code>，<code>export</code>）来导入导出模块，需使用<code>CommonJS</code> （<code>require</code>，<code>module.exports</code>）</p>
+<p><strong>launch.json文件配置：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;version&quot;: &quot;0.2.0&quot;,</span><br><span class="line">  &quot;configurations&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;type&quot;: &quot;node&quot;,</span><br><span class="line">      &quot;request&quot;: &quot;launch&quot;,</span><br><span class="line">      &quot;name&quot;: &quot;debug nodejs&quot;,</span><br><span class="line">      &quot;cwd&quot;: &quot;$&#123;workspaceFolder&#125;&quot;, // 用于设置当前调试文件的根路径 默认为$&#123;workspaceFolder&#125;</span><br><span class="line">      &quot;skipFiles&quot;: [</span><br><span class="line">        &quot;$&#123;workspaceFolder&#125;/node_modules/**/*.js&quot;, // 调试时不进入node_modules中的程序</span><br><span class="line">        &quot;&lt;node_internals&gt;/**&quot;, // 跳过内部node模块程序</span><br><span class="line">      ],</span><br><span class="line">      &quot;program&quot;: &quot;debug.js&quot;, // 启动程序入口文件 必须使用绝对路径</span><br><span class="line">      // &quot;runtimeExecutable&quot;: &quot;npm&quot;, // 执行package.json中定义的script</span><br><span class="line">      // &quot;runtimeArgs&quot;: [&quot;run-script&quot;, &quot;debug&quot;], // 执行package.json中定义的script</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完整代码：<a target="_blank" rel="noopener" href="https://github.com/YonSunZhen/technology/tree/master/vscode-debug/nodejs">点击访问</a></p>
+<h2 id="调试ts程序">调试ts程序</h2>
+<p>背景：项目中在<code>tsconfig.json</code>文件中配置的路径别名，如果使用常规的<code>tsc</code>去编译程序是不能解析出路径别名的，因此引入了<code>ts-node</code> + <code>tsconfig-paths/register</code>来编译并执行程序</p>
+<p>注：项目依赖中需要安装<code>ts-node</code>、<code>typescript</code>、<code>tsconfig-paths</code></p>
+<p><strong>launch.json文件配置：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;version&quot;: &quot;0.2.0&quot;,</span><br><span class="line">    &quot;configurations&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;name&quot;: &quot;ts-node&quot;, // 自定义名称</span><br><span class="line">        &quot;type&quot;: &quot;node&quot;, // 内置特定执行器</span><br><span class="line">        &quot;request&quot;: &quot;launch&quot;,</span><br><span class="line">        &quot;env&quot;: &#123;</span><br><span class="line">          &quot;NODE_ENV&quot;: &quot;test&quot;, // 设置node环境变量 process.env.NODE_ENV 可以获取到这个值</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;runtimeArgs&quot;: [</span><br><span class="line">          &quot;-r&quot;,</span><br><span class="line">          &quot;ts-node/register&quot;, // 加载模块 ts-node/register</span><br><span class="line">          &quot;-r&quot;,</span><br><span class="line">          &quot;tsconfig-paths/register&quot; // 加载模块 tsconfig-paths/register</span><br><span class="line">        ],</span><br><span class="line">        &quot;skipFiles&quot;: [</span><br><span class="line">          &quot;$&#123;workspaceFolder&#125;/modules/assistant/node_modules/**/*.js&quot;, // 调试时跳过node_modules中的程序 必须使用绝对路径</span><br><span class="line">          &quot;&lt;node_internals&gt;/**&quot;, // 跳过内部node模块程序</span><br><span class="line">        ],</span><br><span class="line">        &quot;cwd&quot;: &quot;$&#123;workspaceFolder&#125;/modules/assistant&quot;, // 对应runtimeArgs中找的模块的路径</span><br><span class="line">        &quot;protocol&quot;: &quot;inspector&quot;,</span><br><span class="line">        &quot;program&quot;: &quot;./test/photography.spec.ts&quot;, // 拼接在cwd的路径后面或者使用绝对路径</span><br><span class="line">        &quot;internalConsoleOptions&quot;: &quot;openOnSessionStart&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完整代码：<a target="_blank" rel="noopener" href="https://github.com/YonSunZhen/technology/tree/master/vscode-debug/typescript">点击访问</a></p>
+<h2 id="调试ng-react">调试ng&amp;react</h2>
+<p>1、安装 Debugger for Chrome 插件</p>
+<p><strong>launch.json文件配置：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;version&quot;: &quot;0.2.0&quot;,</span><br><span class="line">  &quot;configurations&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;type&quot;: &quot;chrome&quot;,</span><br><span class="line">      &quot;request&quot;: &quot;launch&quot;,</span><br><span class="line">      &quot;name&quot;: &quot;debug ng&quot;, // 自定义名称</span><br><span class="line">      &quot;url&quot;: &quot;http://localhost:4200&quot;, // 项目启动地址</span><br><span class="line">      &quot;skipFiles&quot;: [</span><br><span class="line">        &quot;$&#123;workspaceFolder&#125;/node_modules/**/*.js&quot;, // 调试时不进入node_modules中的程序</span><br><span class="line">        &quot;&lt;node_internals&gt;/**&quot;, // 跳过内部node模块程序</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完整代码：<a target="_blank" rel="noopener" href="https://github.com/YonSunZhen/technology/tree/master/vscode-debug/ng">点击访问</a></p>
+<h2 id="调试python">调试python</h2>
+<p><strong>launch.json文件配置：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;version&quot;: &quot;0.2.0&quot;,</span><br><span class="line">  &quot;configurations&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;name&quot;: &quot;debug python&quot;,</span><br><span class="line">      &quot;type&quot;: &quot;python&quot;,</span><br><span class="line">      &quot;request&quot;: &quot;launch&quot;,</span><br><span class="line">      &quot;program&quot;: &quot;$&#123;workspaceFolder&#125;/debug.py&quot;, // 调试的程序</span><br><span class="line">      &quot;console&quot;: &quot;integratedTerminal&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完整代码：<a target="_blank" rel="noopener" href="https://github.com/YonSunZhen/technology/tree/master/vscode-debug/python">点击访问</a></p>
+<h2 id="参考资料">参考资料</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/editor/debugging#_launchjson-attributes">Debugging</a></li>
+<li><a target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/introvideos/debugging">Debugging in VS Code</a></li>
+<li><a target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/nodejs/nodejs-debugging">Node.js debugging in VS Code</a></li>
+<li><a target="_blank" rel="noopener" href="https://code.visualstudio.com/docs/editor/variables-reference">Variables Reference</a></li>
+</ul>
+
+      </div>
+        <div class="support-author">
+          <p>感谢您的阅读。 🙏
+          <a href="https://888.com/index.html" target="_blank">关于转载请看这里</a>
+            <!--<a class="btn-pay"  href="#pay-modal">¥ 打赏支持</a>-->
+          </p>
+        </div>
+        <!--
+            <div class="like ">
+              <div class="like-button">
+                <a id="like-note" href="">
+                  <i class="icon-heart"></i>喜欢
+                </a>
+              </div>
+              <span id="likes-count">256</span>
+            </div>
+        -->
+        <div class="otherLink">
+          <div class="previous">
+          </div>
+          <div class="next">
+          </div>
+        </div>
+        <div class="comments" id="comments">
+          
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="/js/md5.min.js"></script>
+<script type="text/javascript">
+  const gitalk = new Gitalk({
+    clientID: '4008c278909d8497d8ad',
+    clientSecret: 'e27df4736052523348bbf856ba03e1d350143b93',
+    repo: 'YonSunZhen.github.io',
+    owner: 'YonSunZhen',
+    admin: ['YonSunZhen'],
+    id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false
+  })
+
+  gitalk.render('comments');
+</script>
+
+        </div>
+      </div>
+    </div>
+   </div>
+</main>
+<div class="footer">
+  <div class="info">
+    <p>
+    <a target="_blank" rel="noopener" href="https://hexo.io"> Hexo </a> 强力驱动|
+      <a target="_blank" rel="noopener" href="https://github.com/Youthink/hexo-themes-yearn"> Yearn </a>
+      主题
+    </p>
+    <p>
+      &copy;
+      <a href="http://beian.miit.gov.cn" target="_blank">YonSunZhen的个人博客 粤ICP备18135123号 </a> 
+    </p>  
+  </div>
+</div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- <script src="/./js/canvas-nest.js"></script> -->
+
+<script type="text/javascript" src="/./js/main.4a9772.js"></script>
+<script type="text/javascript" src="/./js/jquery-1.6.2.min.js"></script>
+<!-- if CDN fails, use local file -->
+<script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
+<script> window.mermaid || document.write('<script src="/./js/mermaid.min.js"><\/script>')</script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+
+<!-- 
+<script src="/assets/js/mermaid.min.js"></script>
+ -->
+<script>
+  $(document).ready(function () {
+    var mermaid_config = {
+      startOnLoad: true,
+      theme: 'dark',
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true
+      }
+    }
+    mermaid.initialize(mermaid_config);
+  });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="keywords" content="hexo,个人博客,blog" />
+  <meta name="description" content="孙永镇个人博客" />
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://busuanzi.ibruce.info">
+  
+  <link rel="dns-prefetch" href="https://widget.daovoice.io">
+  <link rel="dns-prefetch" href="https://widget-static-cdn.daovoice.io">
+  <link rel="dns-prefetch" href="https://im.daovoice.io">
+  
+  
+  <link rel="dns-prefetch" href="https://hm.baidu.com/">
+  
+  
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://api.github.com">
+  <link rel="dns-prefetch" href="https://avatars3.githubusercontent.com">
+  
+  <link rel="stylesheet" type="text/css" href="/./style/main.4a9772.css">
+	<link rel="shortcut icon" href="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg" title="Favicon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+	<title>JavaScript模块化：CommonJS、ES6 Module</title>
+  
+  <script>var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?1b5ca8bbd5cf95a2263942c7c20476d9";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();
+  </script>
+  
+  
+    <script>(function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/123456.js","daovoice");daovoice('init',{app_id: "123456"});daovoice('update');
+  </script>
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+<body>
+<canvas id="pattern-placeholder" height="230"></canvas>
+<div class="navbar-header">
+  <a class="blog-title" href="/">码上就来</a>
+  <a class="face-img" href="/">
+    <img src="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg">
+  </a>
+</div>
+<main>
+  <div class="article-title">
+    
+  
+  <h1 class="title">
+    JavaScript模块化：CommonJS、ES6 Module
+  </h1>
+  
+
+
+    <ul class="article-info">
+      <li>
+        发布
+        <time datetime="2019-09-29T07:55:23.000Z" itemprop="datePublished">2019-09-29</time>
+      </li>
+      <li>
+        
+    更新 <time datetime="2023-05-18T14:27:34.594Z" itemprop="dateUpdated">2023-05-18</time>
+
+      </li>
+      <li id="busuanzi_container_page_pv">
+        阅读 <span id="busuanzi_value_page_pv"></span>
+      </li>
+    </ul>
+  </div>
+  <div class="container">
+    <div class="article">
+      <div class="content">
+        <h2 id="CommonJS">CommonJS</h2>
+<h3 id="前言">前言</h3>
+<p>NodeJS中使用的模块规范。<br>
+根据CommonJS规范，一个单独的文件就是一个模块（module）。加载模块使用require方法，该方法读取一个文件并执行，最后返回文件内部的module.exports对象。<br>
+CommonJS采用同步加载模块的方式，只有加载完才能执行后面的操作，主要适用于服务端。</p>
+<h3 id="使用规则">使用规则</h3>
+<p>1、exports与require使用的模块导入导出规则遵循的是CommonJS(AMD和CMD)规范, 一般在NodeJS(express,koa)中使用，是相对比较先出现的规范,也是目前大多数浏览器支持的模块导入导出规范。</p>
+<h4 id="module-exports-与-exports">module.exports 与 exports</h4>
+<p>1、一个文件即为一个module；<br>
+2、一个module中有很多字段，例如 <code>id</code>  <code>path</code>  <code>parent</code>  <code>exports</code>等等，可以直接在js文件输出<code>module</code>即可查看；<br>
+3、<code>exports</code>表示这个module要导出的数据，<code>module.export</code>默认指向一个空的对象内存；<br>
+4、变量<code>exports</code>默认指向<code>module.exports</code>（引用传递）；<br>
+5、<code>module</code>实际上导出的数据是在<code>module.export</code>这个变量中；</p>
+<h4 id="require">require</h4>
+<p>1、使用<code>require</code>即可导入另一模块中导出的数据；</p>
+<h4 id="exports与require之间的联系">exports与require之间的联系</h4>
+<p>无论模块<code>exports</code>的是什么数据类型，<code>module.exports</code>与<code>require</code>指向的是同一块内存地址，任何一方改变都会影响另一方的数据（动态）</p>
+<p>案例一：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.js文件</span></span><br><span class="line"><span class="keyword">let</span> aNum = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">let</span> aArr = [<span class="number">1</span>];</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  aNum = <span class="number">11</span>; <span class="comment">// 并不会影响module.exports.aNum的值</span></span><br><span class="line">  aArr.<span class="title function_">push</span>(<span class="number">11</span>); <span class="comment">// 会影响module.exports.aArr的值</span></span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;1s a模块改变数据aNum&amp;aArr:&#x27;</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`aNum=<span class="subst">$&#123;aNum&#125;</span>,module.exports.aNum=<span class="subst">$&#123;<span class="variable language_">module</span>.<span class="built_in">exports</span>.aNum&#125;</span>`</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`aArr=<span class="subst">$&#123;aArr&#125;</span>,module.exports.aArr=<span class="subst">$&#123;<span class="variable language_">module</span>.<span class="built_in">exports</span>.aArr&#125;</span>`</span>);</span><br><span class="line">&#125;, <span class="number">1000</span>)</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`3s a模块接受数据:aNum=<span class="subst">$&#123;<span class="variable language_">module</span>.<span class="built_in">exports</span>.aNum&#125;</span>,aArr=<span class="subst">$&#123;<span class="variable language_">module</span>.<span class="built_in">exports</span>.aArr&#125;</span>`</span>);</span><br><span class="line">&#125;, <span class="number">3000</span>)</span><br><span class="line"><span class="comment">// 以下写法等价于</span></span><br><span class="line"><span class="comment">// module.exports.aNum = aNum aNum属于基本类型 值拷贝</span></span><br><span class="line"><span class="comment">// module.exports.aArr = aArr aArr属于对象 值引用</span></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  aNum,</span><br><span class="line">  aArr</span><br><span class="line">&#125;;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`a模块已导出数据:aNum=<span class="subst">$&#123;<span class="variable language_">module</span>.<span class="built_in">exports</span>.aNum&#125;</span>,aArr=<span class="subst">$&#123;<span class="variable language_">module</span>.<span class="built_in">exports</span>.aArr&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// b.js文件</span></span><br><span class="line"><span class="keyword">const</span> a = <span class="built_in">require</span>(<span class="string">&quot;./commonjs_a&quot;</span>);</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`b模块已接收数据:aNum=<span class="subst">$&#123;a.aNum&#125;</span>,aArr=<span class="subst">$&#123;a.aArr&#125;</span>`</span>);</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`2s b模块接受数据:aNum=<span class="subst">$&#123;a.aNum&#125;</span>,aArr=<span class="subst">$&#123;a.aArr&#125;</span>`</span>);</span><br><span class="line">  a.<span class="property">aNum</span> = <span class="number">2</span>;</span><br><span class="line">  a.<span class="property">aArr</span> = [<span class="number">2</span>]</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`2s b模块改变数据:aNum=<span class="subst">$&#123;a.aNum&#125;</span>,aArr=<span class="subst">$&#123;a.aArr&#125;</span>`</span>);</span><br><span class="line">&#125;, <span class="number">2000</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line">a模块已导出数据:aNum=<span class="number">1</span>,aArr=<span class="number">1</span></span><br><span class="line">b模块已接收数据:aNum=<span class="number">1</span>,aArr=<span class="number">1</span></span><br><span class="line">1s a模块改变数据aNum&amp;<span class="attr">aArr</span>:</span><br><span class="line">aNum=<span class="number">11</span>,<span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">aNum</span>=<span class="number">1</span></span><br><span class="line">aArr=<span class="number">1</span>,<span class="number">11</span>,<span class="variable language_">module</span>.<span class="property">exports</span>.<span class="property">aArr</span>=<span class="number">1</span>,<span class="number">11</span></span><br><span class="line">2s b模块接受数据:aNum=<span class="number">1</span>,aArr=<span class="number">1</span>,<span class="number">11</span></span><br><span class="line">2s b模块改变数据:aNum=<span class="number">2</span>,aArr=<span class="number">2</span></span><br><span class="line">3s a模块接受数据:aNum=<span class="number">2</span>,aArr=<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<h2 id="ES6-Module">ES6 Module</h2>
+<h3 id="前言-2">前言</h3>
+<h3 id="使用规则-2">使用规则</h3>
+<p>1、export与import是ES组织官方退出的模块化方案,一般在typescript和三大框架(Angular, Vue, React)中比较常见,但目前支持这套规范的客户端浏览器比较少,所以通常情况下代码都要经过Babel转换成目前浏览器能支持的,也就是exports和require那一套。</p>
+<h4 id="export-与-export-default">export 与 export default</h4>
+<p>1、无论导出数据是什么类型的，<code>export</code>导出的都是变量的引用绑定；</p>
+<p>2、任何未显式导出的变量、函数或类都是模块私有的，无法从模块外部访问；</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// es6_a.mjs</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">let</span> aNum = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">let</span> aArr = [<span class="number">1</span>];</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  aNum = <span class="number">11</span>;</span><br><span class="line">  aArr.<span class="title function_">push</span>(<span class="number">11</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;1s a模块改变数据aNum&amp;aArr:&#x27;</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`aNum=<span class="subst">$&#123;aNum&#125;</span>,`</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`aArr=<span class="subst">$&#123;aArr&#125;</span>,`</span>);</span><br><span class="line">&#125;, <span class="number">1000</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`a模块已导出数据:aNum=<span class="subst">$&#123;aNum&#125;</span>,aArr=<span class="subst">$&#123;aArr&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// es6_b.mjs</span></span><br><span class="line"><span class="comment">// import时必须加&#123; &#125;</span></span><br><span class="line"><span class="keyword">import</span> &#123;aNum, aArr&#125; <span class="keyword">from</span> <span class="string">&#x27;./es6_a.mjs&#x27;</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`b模块已接收数据:aNum=<span class="subst">$&#123;aNum&#125;</span>,aArr=<span class="subst">$&#123;aArr&#125;</span>`</span>);</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`2s b模块接受数据:aNum=<span class="subst">$&#123;aNum&#125;</span>,aArr=<span class="subst">$&#123;aArr&#125;</span>`</span>);</span><br><span class="line">&#125;, <span class="number">2000</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line">a模块已导出数据:aNum=<span class="number">1</span>,aArr=<span class="number">1</span></span><br><span class="line">b模块已接收数据:aNum=<span class="number">1</span>,aArr=<span class="number">1</span></span><br><span class="line">1s a模块改变数据aNum&amp;<span class="attr">aArr</span>:</span><br><span class="line">aNum=<span class="number">11</span></span><br><span class="line">aArr=<span class="number">1</span>,<span class="number">11</span></span><br><span class="line">2s b模块接受数据:aNum=<span class="number">11</span>,aArr=<span class="number">1</span>,<span class="number">11</span></span><br></pre></td></tr></table></figure>
+<p>2、<code>export default</code>有点特殊，导出的数据要根据数据类型来定，与CommonJS的<code>module.exports</code>有点类似</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// es6_a.mjs</span></span><br><span class="line"><span class="keyword">let</span> aNum = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">let</span> aArr = [<span class="number">1</span>];</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  aNum = <span class="number">11</span>;</span><br><span class="line">  aArr.<span class="title function_">push</span>(<span class="number">11</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;1s a模块改变数据aNum&amp;aArr:&#x27;</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`aNum=<span class="subst">$&#123;aNum&#125;</span>`</span>);</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`aArr=<span class="subst">$&#123;aArr&#125;</span>`</span>);</span><br><span class="line">&#125;, <span class="number">1000</span>)</span><br><span class="line"><span class="comment">// 与module.exports类似</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  aNum, <span class="comment">// 数值类型 深拷贝</span></span><br><span class="line">  aArr <span class="comment">// 对象类型 浅拷贝</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`a模块已导出数据:aNum=<span class="subst">$&#123;aNum&#125;</span>,aArr=<span class="subst">$&#123;aArr&#125;</span>`</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// es6_b.mjs</span></span><br><span class="line"><span class="keyword">import</span> a <span class="keyword">from</span> <span class="string">&#x27;./es6_a.mjs&#x27;</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`b模块已接收数据:aNum=<span class="subst">$&#123;a.aNum&#125;</span>,aArr=<span class="subst">$&#123;a.aArr&#125;</span>`</span>);</span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`2s b模块接受数据:aNum=<span class="subst">$&#123;a.aNum&#125;</span>,aArr=<span class="subst">$&#123;a.aArr&#125;</span>`</span>);</span><br><span class="line">&#125;, <span class="number">2000</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line">a模块已导出数据:aNum=<span class="number">1</span>,aArr=<span class="number">1</span></span><br><span class="line">b模块已接收数据:aNum=<span class="number">1</span>,aArr=<span class="number">1</span></span><br><span class="line">1s a模块改变数据aNum&amp;<span class="attr">aArr</span>:</span><br><span class="line">aNum=<span class="number">11</span></span><br><span class="line">aArr=<span class="number">1</span>,<span class="number">11</span></span><br><span class="line">2s b模块接受数据:aNum=<span class="number">1</span>,aArr=<span class="number">1</span>,<span class="number">11</span></span><br></pre></td></tr></table></figure>
+<p>3、* 在<code>export * from 'xxx'</code>后面加注释会报怪异的bug，导出的数据为<code>undefined</code></p>
+<h4 id="import">import</h4>
+<p>1、导入<code>default</code>的不需要使用<code>&#123; &#125;</code>，导入非默认模块则需要加<code>&#123; &#125;</code></p>
+<p>2、一个文件可以同时导出默认的模块和非默认的模块，如下所示：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// es6_a.mjs</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">let</span> color = <span class="string">&#x27;red&#x27;</span>;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">function</span>(<span class="params">num1, num2</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> num1 + num2;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// es6_b.mjs</span></span><br><span class="line"><span class="comment">// 默认值必须排在非默认值之前</span></span><br><span class="line"><span class="keyword">import</span> sum, &#123; color &#125; <span class="keyword">from</span>  <span class="string">&#x27;./es6_a.mjs&#x27;</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">sum</span>(<span class="number">1</span>,<span class="number">2</span>));</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(color);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line"><span class="number">3</span></span><br><span class="line">red</span><br></pre></td></tr></table></figure>
+<p>3、可以使用<code>as</code>在导出和导入时重命名</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// es6_a.mjs</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">sum</span>(<span class="params">num1, num2</span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> num1 + num2;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> &#123; sum <span class="keyword">as</span> a &#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// es6_b.mjs</span></span><br><span class="line"><span class="keyword">import</span> &#123; a <span class="keyword">as</span> aa &#125; <span class="keyword">from</span> <span class="string">&#x27;./es6_a.mjs&#x27;</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">aa</span>(<span class="number">1</span>,<span class="number">2</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出结果</span></span><br><span class="line"><span class="number">3</span></span><br></pre></td></tr></table></figure>
+<h2 id="两者差异">两者差异</h2>
+<p><strong>1. CommonJS 模块输出的是一个值的拷贝（根据数据类型分为深拷贝或浅拷贝），ES6 模块输出的是值的引用（任何数据类型）</strong><br>
+CommonJS 模块输出的是值的拷贝，也就是说，一旦输出一个值，模块内部的变化就影响不到这个值。ES6 模块的运行机制与 CommonJS 不一样。JS 引擎对脚本静态分析的时候，遇到模块加载命令import，就会生成一个只读引用。等到脚本真正执行时，再根据这个只读引用，到被加载的那个模块里面去取值。换句话说，ES6 的import有点像 Unix 系统的“符号连接”，原始值变了，import加载的值也会跟着变。因此，ES6 模块是动态引用，并且不会缓存值，模块里面的变量绑定其所在的模块。</p>
+<p><strong>2. CommonJS 模块是运行时加载，ES6 模块是编译时输出接口</strong></p>
+<p><strong>3. ES6 Module中导入的数据为<code>const</code>，不允许重新赋值；而CommonJS中导入的数据允许重新赋值</strong></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000017878394">参考1</a></p>
+
+      </div>
+        <div class="support-author">
+          <p>感谢您的阅读。 🙏
+          <a href="https://888.com/index.html" target="_blank">关于转载请看这里</a>
+            <!--<a class="btn-pay"  href="#pay-modal">¥ 打赏支持</a>-->
+          </p>
+        </div>
+        <!--
+            <div class="like ">
+              <div class="like-button">
+                <a id="like-note" href="">
+                  <i class="icon-heart"></i>喜欢
+                </a>
+              </div>
+              <span id="likes-count">256</span>
+            </div>
+        -->
+        <div class="otherLink">
+          <div class="previous">
+          </div>
+          <div class="next">
+          </div>
+        </div>
+        <div class="comments" id="comments">
+          
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="/js/md5.min.js"></script>
+<script type="text/javascript">
+  const gitalk = new Gitalk({
+    clientID: '4008c278909d8497d8ad',
+    clientSecret: 'e27df4736052523348bbf856ba03e1d350143b93',
+    repo: 'YonSunZhen.github.io',
+    owner: 'YonSunZhen',
+    admin: ['YonSunZhen'],
+    id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false
+  })
+
+  gitalk.render('comments');
+</script>
+
+        </div>
+      </div>
+    </div>
+   </div>
+</main>
+<div class="footer">
+  <div class="info">
+    <p>
+    <a target="_blank" rel="noopener" href="https://hexo.io"> Hexo </a> 强力驱动|
+      <a target="_blank" rel="noopener" href="https://github.com/Youthink/hexo-themes-yearn"> Yearn </a>
+      主题
+    </p>
+    <p>
+      &copy;
+      <a href="http://beian.miit.gov.cn" target="_blank">YonSunZhen的个人博客 粤ICP备18135123号 </a> 
+    </p>  
+  </div>
+</div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- <script src="/./js/canvas-nest.js"></script> -->
+
+<script type="text/javascript" src="/./js/main.4a9772.js"></script>
+<script type="text/javascript" src="/./js/jquery-1.6.2.min.js"></script>
+<!-- if CDN fails, use local file -->
+<script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
+<script> window.mermaid || document.write('<script src="/./js/mermaid.min.js"><\/script>')</script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+
+<!-- 
+<script src="/assets/js/mermaid.min.js"></script>
+ -->
+<script>
+  $(document).ready(function () {
+    var mermaid_config = {
+      startOnLoad: true,
+      theme: 'dark',
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true
+      }
+    }
+    mermaid.initialize(mermaid_config);
+  });
+</script>
+
+
+</body>
+</html>

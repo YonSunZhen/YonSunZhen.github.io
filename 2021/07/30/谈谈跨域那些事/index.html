@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="keywords" content="hexo,个人博客,blog" />
+  <meta name="description" content="孙永镇个人博客" />
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://busuanzi.ibruce.info">
+  
+  <link rel="dns-prefetch" href="https://widget.daovoice.io">
+  <link rel="dns-prefetch" href="https://widget-static-cdn.daovoice.io">
+  <link rel="dns-prefetch" href="https://im.daovoice.io">
+  
+  
+  <link rel="dns-prefetch" href="https://hm.baidu.com/">
+  
+  
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://api.github.com">
+  <link rel="dns-prefetch" href="https://avatars3.githubusercontent.com">
+  
+  <link rel="stylesheet" type="text/css" href="/./style/main.4a9772.css">
+	<link rel="shortcut icon" href="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg" title="Favicon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+	<title>谈谈跨域那些事</title>
+  
+  <script>var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?1b5ca8bbd5cf95a2263942c7c20476d9";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();
+  </script>
+  
+  
+    <script>(function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/123456.js","daovoice");daovoice('init',{app_id: "123456"});daovoice('update');
+  </script>
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+<body>
+<canvas id="pattern-placeholder" height="230"></canvas>
+<div class="navbar-header">
+  <a class="blog-title" href="/">码上就来</a>
+  <a class="face-img" href="/">
+    <img src="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg">
+  </a>
+</div>
+<main>
+  <div class="article-title">
+    
+  
+  <h1 class="title">
+    谈谈跨域那些事
+  </h1>
+  
+
+
+    <ul class="article-info">
+      <li>
+        发布
+        <time datetime="2021-07-30T06:05:30.000Z" itemprop="datePublished">2021-07-30</time>
+      </li>
+      <li>
+        
+    更新 <time datetime="2023-05-18T14:27:34.599Z" itemprop="dateUpdated">2023-05-18</time>
+
+      </li>
+      <li id="busuanzi_container_page_pv">
+        阅读 <span id="busuanzi_value_page_pv"></span>
+      </li>
+    </ul>
+  </div>
+  <div class="container">
+    <div class="article">
+      <div class="content">
+        <h2 id="浏览器中的HTTP请求">浏览器中的HTTP请求</h2>
+<h3 id="XMLHttpRequest">XMLHttpRequest</h3>
+<p>XHR对象用于与服务器交互。通过<code>XMLHttpRequest</code>可以在不刷新页面的情况下请求特定URL，获取数据。<br>
+<code>XMLHttpRequest</code>在<code>AJAX</code>编程中被大量使用。</p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/XMLHttpRequest">MDN文档</a></p>
+<h3 id="Fetch">Fetch</h3>
+<p>Fetch API提供了一个获取资源的接口（包括跨域请求）</p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API">MDN文档</a></p>
+<h2 id="AJAX">AJAX</h2>
+<p>Asynchronous JavaScript And XML，是一种使用<code>XMLHttpRequest</code>技术构建更复杂，动态的网页的编程实践。大部分的ajax其实就是对<code>XMLHttpRequest</code>的相关API进行封装，使其使用起来更加方便。</p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Glossary/AJAX">MDN文档</a></p>
+<h2 id="跨域">跨域</h2>
+<p>跨域，顾名思义，跨越区域。大概意思为访问的网站请求非同源资源。</p>
+<table>
+<thead>
+<tr>
+<th>当前页面URL</th>
+<th>被请求资源URL</th>
+<th>跨域</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://www.test.com">http://www.test.com</a></td>
+<td><a target="_blank" rel="noopener" href="http://www.test.com/api/users">http://www.test.com/api/users</a></td>
+<td>否</td>
+<td>同源(协议 域名 端口号相同)</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://www.test.com">http://www.test.com</a></td>
+<td><a target="_blank" rel="noopener" href="https://www.test.com/api/users">https://www.test.com/api/users</a></td>
+<td>是</td>
+<td>协议不同(http/https)</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://www.test.com">http://www.test.com</a></td>
+<td><a target="_blank" rel="noopener" href="http://www.baidu.com/api/users">http://www.baidu.com/api/users</a></td>
+<td>是</td>
+<td>主域名不同(test/baidu)</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://www.test.com">http://www.test.com</a></td>
+<td><a target="_blank" rel="noopener" href="http://blog.test.com/api/users">http://blog.test.com/api/users</a></td>
+<td>是</td>
+<td>子域名不同(www/blog)</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="http://www.test.com:8080">http://www.test.com:8080</a></td>
+<td><a target="_blank" rel="noopener" href="http://www.test.com:7070/api/user">http://www.test.com:7070/api/user</a></td>
+<td>是</td>
+<td>端口号不同(8080/7070)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="为什么会有跨域">为什么会有跨域</h3>
+<p>遇事先问为什么。所以，浏览器为什么要设置跨域的限制，然后我们后面还要费心费力地消除跨域的限制。</p>
+<p>为了web生态的安全。看一个例子：</p>
+<p>假设浏览器里面的代码可以随意访问第三方的数据（非同源），那么你可以让你的代码定时轮询访问一个非同源的网页，假设某个时刻恰好有10万人在访问你的网页，那这个第三方的网页每秒就要承受10万的并发量，这样网络中大量的带宽就会被这样白白的浪费掉，整个web生态将会混乱无比。</p>
+<p>当访问的网站需要请求非同源资源时，浏览器将拒绝这些非同源请求。在这种情况下，我们需要解决浏览器跨域时拒绝请求非同源资源的限制。</p>
+<p>当浏览器出现跨域时，那就不可避免的引出两个关键的概念了。<strong>简单请求</strong>和<strong>非简单请求</strong>。</p>
+<p>当跨域产生时，<strong>非简单请求</strong>会在真正向服务端发送请求前进行<strong>预检请求</strong>（OPTIONS）。</p>
+<h3 id="简单请求">简单请求</h3>
+<p>1、条件定义：若请求满足以下<strong>所有的条件</strong>，则请求可视为<strong>简单请求</strong>。</p>
+<ul>
+<li>使用下列方法之一：</li>
+</ul>
+<ol>
+<li>GET</li>
+<li>HEAD</li>
+<li>POST</li>
+</ol>
+<ul>
+<li>请求首部字段不得超出以下集合</li>
+</ul>
+<ol>
+<li>Accept</li>
+<li>Accept-Language</li>
+<li>Content-Language</li>
+<li>Conent-Type：text/plain || multipart/form-data || application/x-www-form-urlencoded</li>
+<li>DPR</li>
+<li>Downlink</li>
+<li>Save-Data</li>
+<li>Viewport-Width</li>
+<li>Width</li>
+</ol>
+<ul>
+<li>请求中的任意XMLHttpRequestUpload 对象均没有注册任何事件监听器</li>
+<li>请求中没有使用 ReadableStream 对象</li>
+</ul>
+<h3 id="非简单请求">非简单请求</h3>
+<p>1、条件定义：若请求满足下列任一条件时，即应首先发送预检请求（options）。</p>
+<ul>
+<li>使用了下面的任一方法：</li>
+</ul>
+<ol>
+<li>PUT</li>
+<li>DELETE</li>
+<li>CONNECT</li>
+<li>OPTIONS</li>
+<li>TRACE</li>
+<li>PATCH</li>
+</ol>
+<ul>
+<li>设置了额外的请求首部字段（除去以下集合中的）</li>
+</ul>
+<ol>
+<li>Accept</li>
+<li>Accept-Language</li>
+<li>Content-Language</li>
+<li>Conent-Type：text/plain || multipart/form-data || application/x-www-form-urlencoded</li>
+<li>DPR</li>
+<li>Downlink</li>
+<li>Save-Data</li>
+<li>Viewport-Width</li>
+<li>Width</li>
+</ol>
+<ul>
+<li>请求中的XMLHttpRequestUpload 对象注册了任意多个事件监听器</li>
+<li>请求中使用了ReadableStream对象</li>
+</ul>
+<h2 id="解决跨域的方案">解决跨域的方案</h2>
+<h3 id="jsonp">jsonp</h3>
+<p>JSON with Padding，是JSON的一种使用模式，可以让网页从别的网域获取资料。由于同源策略，一般来说位于server1.example.com的网页无法与不是server1.example.com的服务器沟通，<strong>而HTML的<code>&lt;script&gt;</code>元素是一个例外</strong>。利用<code>&lt;script&gt;</code>元素的这个开放策略，网页就可以实现跨域获取后端接口数据。</p>
+<p>由于使用script标签的src属性，<strong>因此只支持get方法</strong>。</p>
+<p>当使用JSONP这种方案时，前后端都要有相对应的写法。<br>
+大致流程就是，前端通过<code>&lt;script&gt;</code>标签的src属性向后台接口发起请求（只支持GET请求），并且传递参数<code>callback='response'</code>，与此同时，前端必须定义函数<code>response(responseData)</code>，这是用来处理接口返回数据后一些操作。<br>
+当接口收到请求，返回数据格式为<code>response(responseData)</code>。这样，当前端接受到数据<code>response(responseData)</code>，就刚好执行了我们已经定义好的<code>response(...)</code></p>
+<p>当报错如下时：<br>
+<img src="http://122.51.184.238/storage/files/1_5_%E6%9D%82%E7%83%A9/2_24_%E8%B7%A8%E5%9F%9F.jpeg" alt><br>
+原因是：后端接口没有返回<code>callback(...)</code></p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/JSONP">维基百科</a></p>
+<p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000007665361">JSONP的原理和实现</a></p>
+<h3 id="CORS">CORS</h3>
+<p>Cross Origin Resource Sharing，跨域资源共享，由一系列传输的HTTP头组成，这些HTTP头决定浏览器是否阻止前端JavaScript代码获取跨域请求的响应。</p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Glossary/CORS">MDN文档</a></p>
+<p>1、Access-Control-Allow-Origin：指示请求的资源能共享给哪些域</p>
+<p>2、Access-Control-Allow-Credentials：指示当请求的凭证标记为<code>true</code>时，是否响应该请求</p>
+<p>3、Access-Control-Allow-Headers：用在对预请求的响应中，哪些HTTP方法允许访问请求的资源</p>
+<p>4、Access-Control-Expose-Headers：指示哪些HTTP头的名称能在响应中列出</p>
+<p>5、Access-Control-Max-Age：指示预请求的结果能被缓存多久</p>
+<p>6、Access-Control-Request-Headers：用于发起一个预请求，告知服务器正式请求会使用哪些HTTP头</p>
+<p>7、Access-Control-Request-Method：用于发起一个预请求，告知服务器正式请求会使用哪一种HTTP请求方法</p>
+<p>8、Origin：指示获取资源的请求是从什么域发起的</p>
+<p>koa2中接口允许跨域响应，响应头部字段设置如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ctx.<span class="title function_">set</span>(<span class="string">&#x27;Access-Control-Allow-Origin&#x27;</span>, <span class="string">&#x27;*&#x27;</span>);</span><br><span class="line">ctx.<span class="title function_">set</span>(<span class="string">&#x27;Access-Control-Allow-Methods&#x27;</span>, <span class="string">&#x27;POST, GET, OPTIONS, DELETE, PUT&#x27;</span>);</span><br><span class="line">ctx.<span class="title function_">set</span>(<span class="string">&#x27;Access-Control-Allow-Headers&#x27;</span>, <span class="string">&#x27;X-Requested-With, User-Agent, Referer, Content-Type, Cache-Control,accesstoken&#x27;</span>);  </span><br><span class="line">ctx.<span class="title function_">set</span>(<span class="string">&#x27;Access-Control-Max-Age&#x27;</span>, <span class="string">&#x27;86400&#x27;</span>);</span><br><span class="line">ctx.<span class="title function_">set</span>(<span class="string">&#x27;Access-Control-Allow-Credentials&#x27;</span>, <span class="string">&#x27;true&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p><strong>注意事项</strong>：<br>
+若添加了自定义的Header字段，必须将这个字段名添加到服务端响应头部Access-Control-Allow-Headers中，不然会报错。</p>
+<p><strong>项目踩坑</strong>：<br>
+在接口响应中添加了以上允许跨域响应的头部字段，但是在开发中还报了跨域的错误（<code>Response to preflight request doesn't pass access control check: Redirect is not allowed for a preflight request</code>）,报错的大致意思是<strong>预检请求禁止重定向</strong>。经过排查，发现是服务端nginx做了HTTP到HTTPS的重定向设置，而我恰好是以<strong>http+ip地址</strong>的形式发起请求的，那么请求就被重定向到<strong>https</strong>了，然而，浏览器发起的预检请求是禁止重定向的，因此报错了。解决方案就是将请求地址改为https+域名的形式，这样预检请求就不会重定向了。</p>
+
+      </div>
+        <div class="support-author">
+          <p>感谢您的阅读。 🙏
+          <a href="https://888.com/index.html" target="_blank">关于转载请看这里</a>
+            <!--<a class="btn-pay"  href="#pay-modal">¥ 打赏支持</a>-->
+          </p>
+        </div>
+        <!--
+            <div class="like ">
+              <div class="like-button">
+                <a id="like-note" href="">
+                  <i class="icon-heart"></i>喜欢
+                </a>
+              </div>
+              <span id="likes-count">256</span>
+            </div>
+        -->
+        <div class="otherLink">
+          <div class="previous">
+          </div>
+          <div class="next">
+          </div>
+        </div>
+        <div class="comments" id="comments">
+          
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="/js/md5.min.js"></script>
+<script type="text/javascript">
+  const gitalk = new Gitalk({
+    clientID: '4008c278909d8497d8ad',
+    clientSecret: 'e27df4736052523348bbf856ba03e1d350143b93',
+    repo: 'YonSunZhen.github.io',
+    owner: 'YonSunZhen',
+    admin: ['YonSunZhen'],
+    id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false
+  })
+
+  gitalk.render('comments');
+</script>
+
+        </div>
+      </div>
+    </div>
+   </div>
+</main>
+<div class="footer">
+  <div class="info">
+    <p>
+    <a target="_blank" rel="noopener" href="https://hexo.io"> Hexo </a> 强力驱动|
+      <a target="_blank" rel="noopener" href="https://github.com/Youthink/hexo-themes-yearn"> Yearn </a>
+      主题
+    </p>
+    <p>
+      &copy;
+      <a href="http://beian.miit.gov.cn" target="_blank">YonSunZhen的个人博客 粤ICP备18135123号 </a> 
+    </p>  
+  </div>
+</div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- <script src="/./js/canvas-nest.js"></script> -->
+
+<script type="text/javascript" src="/./js/main.4a9772.js"></script>
+<script type="text/javascript" src="/./js/jquery-1.6.2.min.js"></script>
+<!-- if CDN fails, use local file -->
+<script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
+<script> window.mermaid || document.write('<script src="/./js/mermaid.min.js"><\/script>')</script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+
+<!-- 
+<script src="/assets/js/mermaid.min.js"></script>
+ -->
+<script>
+  $(document).ready(function () {
+    var mermaid_config = {
+      startOnLoad: true,
+      theme: 'dark',
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true
+      }
+    }
+    mermaid.initialize(mermaid_config);
+  });
+</script>
+
+
+</body>
+</html>

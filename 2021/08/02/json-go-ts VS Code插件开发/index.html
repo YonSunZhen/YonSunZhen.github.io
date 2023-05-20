@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="keywords" content="hexo,个人博客,blog" />
+  <meta name="description" content="孙永镇个人博客" />
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://busuanzi.ibruce.info">
+  
+  <link rel="dns-prefetch" href="https://widget.daovoice.io">
+  <link rel="dns-prefetch" href="https://widget-static-cdn.daovoice.io">
+  <link rel="dns-prefetch" href="https://im.daovoice.io">
+  
+  
+  <link rel="dns-prefetch" href="https://hm.baidu.com/">
+  
+  
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://api.github.com">
+  <link rel="dns-prefetch" href="https://avatars3.githubusercontent.com">
+  
+  <link rel="stylesheet" type="text/css" href="/./style/main.4a9772.css">
+	<link rel="shortcut icon" href="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg" title="Favicon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+	<title>json-go-ts VS Code插件开发</title>
+  
+  <script>var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?1b5ca8bbd5cf95a2263942c7c20476d9";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();
+  </script>
+  
+  
+    <script>(function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/123456.js","daovoice");daovoice('init',{app_id: "123456"});daovoice('update');
+  </script>
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+<body>
+<canvas id="pattern-placeholder" height="230"></canvas>
+<div class="navbar-header">
+  <a class="blog-title" href="/">码上就来</a>
+  <a class="face-img" href="/">
+    <img src="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg">
+  </a>
+</div>
+<main>
+  <div class="article-title">
+    
+  
+  <h1 class="title">
+    json-go-ts VS Code插件开发
+  </h1>
+  
+
+
+    <ul class="article-info">
+      <li>
+        发布
+        <time datetime="2021-08-02T06:16:10.000Z" itemprop="datePublished">2021-08-02</time>
+      </li>
+      <li>
+        
+    更新 <time datetime="2023-05-18T14:27:34.597Z" itemprop="dateUpdated">2023-05-18</time>
+
+      </li>
+      <li id="busuanzi_container_page_pv">
+        阅读 <span id="busuanzi_value_page_pv"></span>
+      </li>
+    </ul>
+  </div>
+  <div class="container">
+    <div class="article">
+      <div class="content">
+        <h2 id="背景">背景</h2>
+<p>项目中需要一份json配置文件，这份配置文件的某些字段是依据另外的一个typescrip文件<code>export</code>出来的字段，为了降低编码过程中造成的字段名出错的机率。</p>
+<p>因此，考虑开发一个插件用于：</p>
+<ul>
+<li>json文件中自动补全function name</li>
+<li>jaon文件到typescript文件的自定义跳转</li>
+<li>json文件中错误波浪线智能提示（当typescript文件没有export该字段时显示波浪线）</li>
+</ul>
+<p>插件效果：</p>
+<p><img src="https://itc.desaysv.com/dfs/wxapp-assets/other/hello.gif" alt="IDE"></p>
+<h2 id="实现">实现</h2>
+<p>思路：定义两个插件变量（可根据实际情况自己在插件设置里面配置）</p>
+<ul>
+<li>fileName：用于识别文件名关键字 – 默认为<code>index</code></li>
+<li>filePath：以json文件为参照，index typescript文件的相对路径，用于获取ts文件 – 默认为<code>./src/index</code></li>
+<li>关键实现：使用<code>@babel/parser</code>、<code>@babel/traverse</code>将ts文件转化AST，这样才能获取到ts文件中export出来的function name</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://github.com/YonSunZhen/vscode-plugin-json-go-ts">项目源码</a></p>
+<h3 id="自动补全">自动补全</h3>
+<p>思路：</p>
+<ul>
+<li>获取ts文件中export出来的function列表</li>
+<li>监听VS Code中光标处输入的字符，当输入<code>index.</code>时，弹出自动补全面板，此时自动补全面板中的内容就是ts文件中export出来的所有function列表</li>
+</ul>
+<p>关键代码实现：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">provideCompletionItems</span>(<span class="params"><span class="variable language_">document</span>, position, token, context</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> _filePath = <span class="title function_">getFilePath</span>(<span class="variable language_">document</span>, filePath);</span><br><span class="line">  <span class="keyword">const</span> _fnData = <span class="title function_">getFnFromTsFile</span>(<span class="string">`<span class="subst">$&#123;_filePath&#125;</span>.ts`</span>);</span><br><span class="line">  <span class="keyword">const</span> linePrefix = <span class="variable language_">document</span>.<span class="title function_">lineAt</span>(position).<span class="property">text</span>.<span class="title function_">substr</span>(<span class="number">0</span>, position.<span class="property">character</span>);</span><br><span class="line">  <span class="keyword">if</span> (!linePrefix.<span class="title function_">endsWith</span>(<span class="string">`&quot;<span class="subst">$&#123;fileName&#125;</span>.`</span>)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">undefined</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">let</span> <span class="title function_">myitem</span> = (<span class="params">text: string</span>) =&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> item = <span class="keyword">new</span> vscode.<span class="title class_">CompletionItem</span>(text, vscode.<span class="property">CompletionItemKind</span>.<span class="property">Function</span>);</span><br><span class="line">    item.<span class="property">range</span> = <span class="keyword">new</span> vscode.<span class="title class_">Range</span>(position, position);</span><br><span class="line">    <span class="keyword">return</span> item;</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">return</span> _fnData.<span class="title function_">map</span>(<span class="function"><span class="params">_fnItem</span> =&gt;</span> <span class="title function_">myitem</span>(_fnItem.<span class="property">fnName</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="跳转到定义">跳转到定义</h3>
+<p>思路：</p>
+<ul>
+<li>获取ts文件中export出来的function列表，包括每个function对应的loc（即function在编辑器中所处的位置信息），<strong>这就是前面我们为什么要将ts文件转化为AST的重要原因</strong>，后面实现代码跳转需要用到这些位置信息</li>
+<li>获取光标处所在的function并跳转到对应ts文件中的对应位置</li>
+</ul>
+<p>关键代码实现：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">provideDefinition</span>(<span class="params"><span class="variable language_">document</span>: vscode.TextDocument, position: vscode.Position, token</span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> _filePath = <span class="title function_">getFilePath</span>(<span class="variable language_">document</span>, filePath);</span><br><span class="line">  <span class="keyword">const</span> _fnData = <span class="title function_">getFnFromTsFile</span>(<span class="string">`<span class="subst">$&#123;_filePath&#125;</span>.ts`</span>);  </span><br><span class="line">  <span class="keyword">const</span> _wordRangePosition = <span class="variable language_">document</span>.<span class="title function_">getWordRangeAtPosition</span>(position);</span><br><span class="line">  <span class="keyword">const</span> word = <span class="variable language_">document</span>.<span class="title function_">getText</span>(_wordRangePosition); <span class="comment">// 获取当前光标输入字符</span></span><br><span class="line">  <span class="keyword">const</span> _reg = <span class="keyword">new</span> <span class="title class_">RegExp</span>(<span class="string">`&quot;<span class="subst">$&#123;fileName&#125;</span>\..*&quot;`</span>);  </span><br><span class="line">  <span class="keyword">if</span> (_reg.<span class="title function_">test</span>(word)) &#123;</span><br><span class="line">    <span class="comment">// const _fnName = word.replace(/&quot;index\.|&quot;/g, &#x27;&#x27;);</span></span><br><span class="line">    <span class="keyword">const</span> _fnName = word.<span class="title function_">replace</span>(<span class="keyword">new</span> <span class="title class_">RegExp</span>(<span class="string">`&quot;<span class="subst">$&#123;fileName&#125;</span>\.|&quot;`</span>, <span class="string">&#x27;g&#x27;</span>), <span class="string">&#x27;&#x27;</span>);</span><br><span class="line">    <span class="keyword">if</span>(_fnData.<span class="title function_">map</span>(<span class="function"><span class="params">_fnItem</span> =&gt;</span> _fnItem.<span class="property">fnName</span>).<span class="title function_">includes</span>(_fnName)) &#123;</span><br><span class="line">      <span class="keyword">const</span> filePath = <span class="string">`<span class="subst">$&#123;_filePath&#125;</span>.ts`</span>;</span><br><span class="line">      <span class="keyword">for</span>(<span class="keyword">const</span> _fnItem <span class="keyword">of</span> _fnData) &#123;</span><br><span class="line">        <span class="keyword">if</span>(_fnItem.<span class="property">fnName</span> === _fnName) &#123;</span><br><span class="line">          <span class="keyword">const</span> tmpPath = <span class="string">`file:///<span class="subst">$&#123;filePath&#125;</span>`</span>; <span class="comment">// <span class="doctag">TODO:</span> 踩坑记录 必须 ///</span></span><br><span class="line">          <span class="keyword">if</span> (fs.<span class="title function_">existsSync</span>(filePath)) &#123;</span><br><span class="line">            <span class="keyword">const</span> _targetUri = vscode.<span class="property">Uri</span>.<span class="title function_">parse</span>(tmpPath); <span class="comment">// <span class="doctag">TODO:</span> 踩坑记录 使用parse</span></span><br><span class="line">            <span class="keyword">const</span> _targetPosition = <span class="keyword">new</span> vscode.<span class="title class_">Position</span>(_fnItem.<span class="property">loc</span>.<span class="property">start</span>.<span class="property">line</span>, _fnItem.<span class="property">loc</span>.<span class="property">start</span>.<span class="property">column</span>);</span><br><span class="line">            <span class="keyword">const</span> _targetRange = <span class="keyword">new</span> vscode.<span class="title class_">Range</span>(_targetPosition, _targetPosition);</span><br><span class="line">            <span class="keyword">const</span> _fileNameLen = (fileName <span class="keyword">as</span> string).<span class="property">length</span> || <span class="number">0</span>;</span><br><span class="line">             <span class="comment">// 当按住ctrl时，编辑器默认会将连在一块的字符都显示出来下划线 这时候如果想指定哪些字符需要显示下划线需要配置以下的originSelectionRange</span></span><br><span class="line">            <span class="keyword">const</span> _orgSelectionStartPosition = <span class="keyword">new</span> vscode.<span class="title class_">Position</span>(_wordRangePosition.<span class="property">start</span>.<span class="property">line</span>, _wordRangePosition.<span class="property">start</span>.<span class="property">character</span> + _fileNameLen + <span class="number">2</span>);</span><br><span class="line">            <span class="keyword">const</span> _orgSelectionEndPosition = <span class="keyword">new</span> vscode.<span class="title class_">Position</span>(_wordRangePosition.<span class="property">end</span>.<span class="property">line</span>, _wordRangePosition.<span class="property">end</span>.<span class="property">character</span> - <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">const</span> _originSelectionRange = <span class="keyword">new</span> vscode.<span class="title class_">Range</span>(_orgSelectionStartPosition, _orgSelectionEndPosition);</span><br><span class="line">            <span class="keyword">const</span> <span class="attr">_locationLink</span>: vscode.<span class="property">LocationLink</span> = &#123;</span><br><span class="line">              <span class="attr">originSelectionRange</span>: _originSelectionRange,</span><br><span class="line">              <span class="attr">targetUri</span>: _targetUri,</span><br><span class="line">              <span class="attr">targetRange</span>: _targetRange</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="keyword">return</span> [_locationLink];</span><br><span class="line">            <span class="comment">// return new vscode.Location(vscode.Uri.parse(tmpPath), new vscode.Position(_fnItem.loc.start.line, _fnItem.loc.start.column));</span></span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="智能诊断-提示">智能诊断&amp;提示</h3>
+<p>这个功能的主要对象是json文件，因此我们需要获取到json文件中所有的字段，包括每个字段所处的位置信息（为了后面显示波浪线），这时候我们可能会想到说，将json文件转化为AST，思路是正确的，但是前面说的<code>@babel/traverse</code>只能用来转化js或ts文件，并不支持json文件的转化</p>
+<p>幸好别人已经有写过类似的轮子了，<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/json-to-ast">json-to-ast</a>出场，<code>json-to-ast</code>可以将json文件转化为AST，感谢开源。</p>
+<p>另外：在VS Code中智能诊断使用<code>createDiagnosticCollection</code>这个API来实现的，切记。</p>
+<p>关键代码实现：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 智能诊断 波浪线提示</span></span><br><span class="line"><span class="keyword">const</span> collection = vscode.<span class="property">languages</span>.<span class="title function_">createDiagnosticCollection</span>(<span class="string">&#x27;testFnName&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span> (vscode.<span class="property">window</span>.<span class="property">activeTextEditor</span>) &#123;</span><br><span class="line">  collection.<span class="title function_">clear</span>();</span><br><span class="line">  <span class="title function_">updateDiagnostics</span>(vscode.<span class="property">window</span>.<span class="property">activeTextEditor</span>.<span class="property">document</span>, collection);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 使用onDidChangeTextDocument监听编辑文档事件</span></span><br><span class="line">context.<span class="property">subscriptions</span>.<span class="title function_">push</span>(vscode.<span class="property">workspace</span>.<span class="title function_">onDidChangeTextDocument</span>(<span class="function"><span class="params">editor</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">if</span> (editor) &#123;</span><br><span class="line">    collection.<span class="title function_">clear</span>();</span><br><span class="line">    <span class="title function_">updateDiagnostics</span>(editor.<span class="property">document</span>, collection);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">updateDiagnostics</span>(<span class="params"><span class="variable language_">document</span>: vscode.TextDocument, collection: vscode.DiagnosticCollection</span>): <span class="keyword">void</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> _text = <span class="variable language_">document</span>.<span class="title function_">getText</span>();</span><br><span class="line">  <span class="keyword">const</span> _jsonAst = <span class="title function_">jsonToAst</span>(_text) <span class="keyword">as</span> jsonToAst.<span class="property">ObjectNode</span>;</span><br><span class="line">  <span class="keyword">const</span> <span class="attr">_errorText</span>: <span class="title class_">JsonTextInfo</span>[] = [];</span><br><span class="line">  <span class="keyword">const</span> _filePath = <span class="title function_">getFilePath</span>(<span class="variable language_">document</span>, filePath);</span><br><span class="line">  <span class="keyword">const</span> _fnData = <span class="title function_">getFnFromTsFile</span>(<span class="string">`<span class="subst">$&#123;_filePath&#125;</span>.ts`</span>);  </span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">recursiveJsonAst</span> = (<span class="params">astArr: any[]</span>) =&gt; &#123;</span><br><span class="line">    astArr.<span class="title function_">forEach</span>(<span class="function">(<span class="params">jsonAstItem</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">const</span> _value = jsonAstItem?.<span class="property">value</span> || jsonAstItem?.<span class="property">children</span>;</span><br><span class="line">      <span class="keyword">if</span>(_value.<span class="property">children</span>) &#123;</span><br><span class="line">        <span class="title function_">recursiveJsonAst</span>(_value.<span class="property">children</span>);</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span>(<span class="title class_">Array</span>.<span class="title function_">isArray</span>(_value)) &#123;</span><br><span class="line">        <span class="title function_">recursiveJsonAst</span>(_value);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> _textValue = _value.<span class="property">value</span>;</span><br><span class="line">        <span class="keyword">const</span> _reg = <span class="keyword">new</span> <span class="title class_">RegExp</span>(<span class="string">`<span class="subst">$&#123;fileName&#125;</span>\..*`</span>, <span class="string">&#x27;g&#x27;</span>);</span><br><span class="line">        <span class="keyword">if</span>(_reg.<span class="title function_">test</span>(_textValue)) &#123;</span><br><span class="line">          <span class="keyword">const</span> _fnVal = _textValue.<span class="title function_">replace</span>(<span class="keyword">new</span> <span class="title class_">RegExp</span>(<span class="string">`<span class="subst">$&#123;fileName&#125;</span>\.`</span>, <span class="string">&#x27;g&#x27;</span>), <span class="string">&#x27;&#x27;</span>);</span><br><span class="line">          <span class="keyword">if</span>(!_fnData.<span class="title function_">map</span>((<span class="function"><span class="params">_fnItem</span> =&gt;</span> _fnItem.<span class="property">fnName</span>)).<span class="title function_">includes</span>(_fnVal)) &#123;</span><br><span class="line">            _errorText.<span class="title function_">push</span>(&#123;</span><br><span class="line">              <span class="attr">value</span>: _fnVal,</span><br><span class="line">              <span class="attr">loc</span>: _value.<span class="property">loc</span></span><br><span class="line">            &#125;);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;  </span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="title function_">recursiveJsonAst</span>(_jsonAst.<span class="property">children</span>);</span><br><span class="line">  <span class="keyword">const</span> _diagCollection = [];</span><br><span class="line">  _errorText.<span class="title function_">forEach</span>(<span class="function"><span class="params">_errTextItem</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> _start = _errTextItem.<span class="property">loc</span>.<span class="property">start</span>;</span><br><span class="line">    <span class="keyword">const</span> _end = _errTextItem.<span class="property">loc</span>.<span class="property">end</span>;</span><br><span class="line">    <span class="keyword">const</span> _fileNameLen = (fileName <span class="keyword">as</span> string).<span class="property">length</span> || <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">const</span> _startPosition = <span class="keyword">new</span> vscode.<span class="title class_">Position</span>(_start.<span class="property">line</span> - <span class="number">1</span>, _start.<span class="property">column</span> + _fileNameLen + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">const</span> _endPosition = <span class="keyword">new</span> vscode.<span class="title class_">Position</span>(_end.<span class="property">line</span> - <span class="number">1</span>, _end.<span class="property">column</span> - <span class="number">2</span>);</span><br><span class="line">    _diagCollection.<span class="title function_">push</span>(&#123;</span><br><span class="line">      <span class="attr">message</span>: <span class="string">`Function <span class="subst">$&#123;_errTextItem.value&#125;</span> does not exist`</span>,</span><br><span class="line">      <span class="attr">range</span>: <span class="keyword">new</span> vscode.<span class="title class_">Range</span>(_startPosition, _endPosition),</span><br><span class="line">      <span class="attr">severity</span>: vscode.<span class="property">DiagnosticSeverity</span>.<span class="property">Error</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">  collection.<span class="title function_">set</span>(<span class="variable language_">document</span>.<span class="property">uri</span>, _diagCollection);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="一些踩坑">一些踩坑</h2>
+<ol>
+<li>发布插件时执行<code>vsce publish</code>时报错<code>ERROR Failed request: (401)</code>，生成的personal access token权限弄错了，应该选<code>Full access</code></li>
+</ol>
+<p><img src="http://122.51.184.238/storage/files/1_5_%E6%9D%82%E7%83%A9/2_25_json-go-ts1.jpeg" alt></p>
+<ol start="2">
+<li>
+<p>发布插件时报错：<code>ERROR Make sure to edit the README.md file before you package or publish your extension</code> – 修改一下工程里面的<code>README.md</code>文件（原来的文件删除&amp;重写）</p>
+</li>
+<li>
+<p>使用<a target="_blank" rel="noopener" href="https://marketplace.visualstudio.com/manage/createpublisher?managePageRedirect=true">地址</a>创建publisher账号一直不成功 – 网络被限制了（科学上网真香）</p>
+</li>
+<li>
+<p>插件在本地开发环境下可以运行，发布到线上没有响应（也没有报错）</p>
+<p>经过排查，项目中使用了一些npm库，但是发布插件时使用了<code>tsc</code>来编译，这种情况下<code>node_modules</code>里面一些npm库的代码是没有被编译进去的。需要引入<code>webpack</code>来进行打包&amp;编译</p>
+</li>
+</ol>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/64584850/get-vscode-registercompletionitemprovider-to-work-in-a-json-file-with-a-word">json文件中自动补全面板不弹出</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/liuxianan/p/vscode-plugin-overview.html">VS Code插件开发全攻略</a></li>
+<li><a target="_blank" rel="noopener" href="https://code.visualstudio.com/api/working-with-extensions/publishing-extension">VS Code Document</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Microsoft/vscode-extension-samples/">Some demo</a></li>
+</ul>
+
+      </div>
+        <div class="support-author">
+          <p>感谢您的阅读。 🙏
+          <a href="https://888.com/index.html" target="_blank">关于转载请看这里</a>
+            <!--<a class="btn-pay"  href="#pay-modal">¥ 打赏支持</a>-->
+          </p>
+        </div>
+        <!--
+            <div class="like ">
+              <div class="like-button">
+                <a id="like-note" href="">
+                  <i class="icon-heart"></i>喜欢
+                </a>
+              </div>
+              <span id="likes-count">256</span>
+            </div>
+        -->
+        <div class="otherLink">
+          <div class="previous">
+          </div>
+          <div class="next">
+          </div>
+        </div>
+        <div class="comments" id="comments">
+          
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="/js/md5.min.js"></script>
+<script type="text/javascript">
+  const gitalk = new Gitalk({
+    clientID: '4008c278909d8497d8ad',
+    clientSecret: 'e27df4736052523348bbf856ba03e1d350143b93',
+    repo: 'YonSunZhen.github.io',
+    owner: 'YonSunZhen',
+    admin: ['YonSunZhen'],
+    id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false
+  })
+
+  gitalk.render('comments');
+</script>
+
+        </div>
+      </div>
+    </div>
+   </div>
+</main>
+<div class="footer">
+  <div class="info">
+    <p>
+    <a target="_blank" rel="noopener" href="https://hexo.io"> Hexo </a> 强力驱动|
+      <a target="_blank" rel="noopener" href="https://github.com/Youthink/hexo-themes-yearn"> Yearn </a>
+      主题
+    </p>
+    <p>
+      &copy;
+      <a href="http://beian.miit.gov.cn" target="_blank">YonSunZhen的个人博客 粤ICP备18135123号 </a> 
+    </p>  
+  </div>
+</div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- <script src="/./js/canvas-nest.js"></script> -->
+
+<script type="text/javascript" src="/./js/main.4a9772.js"></script>
+<script type="text/javascript" src="/./js/jquery-1.6.2.min.js"></script>
+<!-- if CDN fails, use local file -->
+<script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
+<script> window.mermaid || document.write('<script src="/./js/mermaid.min.js"><\/script>')</script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+
+<!-- 
+<script src="/assets/js/mermaid.min.js"></script>
+ -->
+<script>
+  $(document).ready(function () {
+    var mermaid_config = {
+      startOnLoad: true,
+      theme: 'dark',
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true
+      }
+    }
+    mermaid.initialize(mermaid_config);
+  });
+</script>
+
+
+</body>
+</html>

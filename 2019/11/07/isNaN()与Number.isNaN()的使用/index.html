@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><meta name="generator" content="Hexo 3.8.0">
+<head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="keywords" content="hexo,个人博客,blog">
-  <meta name="description" content="某某的个人博客">
+  <meta name="keywords" content="hexo,个人博客,blog" />
+  <meta name="description" content="孙永镇个人博客" />
   <meta http-equiv="x-dns-prefetch-control" content="on">
   <link rel="dns-prefetch" href="https://busuanzi.ibruce.info">
   
@@ -21,8 +21,8 @@
   <link rel="dns-prefetch" href="https://api.github.com">
   <link rel="dns-prefetch" href="https://avatars3.githubusercontent.com">
   
-  <link rel="stylesheet" type="text/css" href="/./style/main.3fbd72.css">
-	<link rel="shortcut icon" href="/favicon.ico" title="Favicon">
+  <link rel="stylesheet" type="text/css" href="/./style/main.4a9772.css">
+	<link rel="shortcut icon" href="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg" title="Favicon">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
 	<title>isNaN()与Number.isNaN()的使用</title>
   
@@ -33,13 +33,13 @@
     <script>(function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/123456.js","daovoice");daovoice('init',{app_id: "123456"});daovoice('update');
   </script>
   
-</head>
+<meta name="generator" content="Hexo 5.4.2"></head>
 <body>
 <canvas id="pattern-placeholder" height="230"></canvas>
 <div class="navbar-header">
   <a class="blog-title" href="/">码上就来</a>
   <a class="face-img" href="/">
-    <img src="https://tva3.sinaimg.cn/crop.0.0.200.200.180/005Kc3C1jw8f2uep0hhkvj305k05k3yk.jpg">
+    <img src="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg">
   </a>
 </div>
 <main>
@@ -59,7 +59,7 @@
       </li>
       <li>
         
-    更新 <time datetime="2020-03-18T12:25:10.504Z" itemprop="dateUpdated">2020-03-18</time>
+    更新 <time datetime="2023-05-18T14:27:34.596Z" itemprop="dateUpdated">2023-05-18</time>
 
       </li>
       <li id="busuanzi_container_page_pv">
@@ -70,35 +70,32 @@
   <div class="container">
     <div class="article">
       <div class="content">
-        <h2>目的</h2>
-<p>1、<font size="3">后台验证参数。</font>
-2、<font size="3">如果传进来的参数是非数值字符串，类似“haha”，“Hello World”这种就不通过。</font>
-3、<font size="3">如果传进来的值为NaN报不通过。</font>
-4、 <font size="3">如果传进来的值为'true'报不通过。</font>
+        <h2 id="目的">目的</h2>
+<p>1、<font size="3">后台验证参数。</font><br>
+2、<font size="3">如果传进来的参数是非数值字符串，类似“haha”，“Hello World”这种就不通过。</font><br>
+3、<font size="3">如果传进来的值为NaN报不通过。</font><br>
+4、 <font size="3">如果传进来的值为’true’报不通过。</font><br>
 5、<font size="3">方法：isNaN(param) 为true表示不通过。</font></p>
-<h2>isNaN()</h2>
+<h2 id="isNaN">isNaN()</h2>
 <ul>
 <li><font size="3">流程：（非number型为true，因为会先进行类型转换）</font></li>
 </ul>
 <blockquote>
-<p>isNaN()在接受到一个值之后，<strong>会尝试将这个值转换为数值</strong>，例如字符串‘10’或Boolean值。而任何不能被转换为数值的值都会导致这个函数返回true。--《你不知道的JavaScript》</p>
+<p>isNaN()在接受到一个值之后，<strong>会尝试将这个值转换为数值</strong>，例如字符串‘10’或Boolean值。而任何不能被转换为数值的值都会导致这个函数返回true。–《你不知道的JavaScript》</p>
 </blockquote>
-<h2>Number.isNaN()</h2>
+<h2 id="Number-isNaN">Number.isNaN()</h2>
 <ul>
 <li><font size="3">内部实现：（非numberxing为false，因为直接检测是否为number型）</font><br>
 <code>typeof n === 'number' &amp;&amp; isNaN(n)</code></li>
 </ul>
-<h2>总结&amp;&amp;区别</h2>
-<p>1、<font size="3">isNaN()为false的话，Number.isNaN()一定是false。</font>
-2、<font size="3">isNaN()为true的话，Number.isNaN()不一定为true，例如检测字符串的情况。</font>
+<h2 id="总结-区别">总结&amp;&amp;区别</h2>
+<p>1、<font size="3">isNaN()为false的话，Number.isNaN()一定是false。</font><br>
+2、<font size="3">isNaN()为true的话，Number.isNaN()不一定为true，例如检测字符串的情况。</font><br>
 3、<font size="3">Number.isNaN()：前提一定得是number，不然肯定为false。</font><br>
 4、<font size="3">例如：对于所有的字符串都一样</font></p>
 <ul>
 <li><code>Number.isNaN(‘bbbb’) // false</code></li>
 <li><code>isNaN(‘bbbb’) // true</code></li>
-</ul>
-<hr>
-<ul>
 <li><strong>NaN字面意思是非法数值（但还是属于数值型）</strong>。</li>
 <li><font size="3">首先，NaN是一个number类型。</font></li>
 <li><code>typeof NaN === “number” // true</code></li>
@@ -149,26 +146,51 @@
   gitalk.render('comments');
 </script>
 
-
         </div>
       </div>
     </div>
-   
+   </div>
 </main>
 <div class="footer">
   <div class="info">
     <p>
-    <a href="https://hexo.io"> Hexo </a> 强力驱动 666|
-      <a href="https://github.com/Youthink/hexo-themes-yearn"> Yearn </a>
+    <a target="_blank" rel="noopener" href="https://hexo.io"> Hexo </a> 强力驱动|
+      <a target="_blank" rel="noopener" href="https://github.com/Youthink/hexo-themes-yearn"> Yearn </a>
       主题
     </p>
-    <p>&copy;2013-2019 某某的博客 京ICP备xxxxxx号</p>
+    <p>
+      &copy;
+      <a href="http://beian.miit.gov.cn" target="_blank">YonSunZhen的个人博客 粤ICP备18135123号 </a> 
+    </p>  
   </div>
 </div>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 <!-- <script src="/./js/canvas-nest.js"></script> -->
 
-<script type="text/javascript" src="/./js/main.3fbd72.js"></script>
+<script type="text/javascript" src="/./js/main.4a9772.js"></script>
+<script type="text/javascript" src="/./js/jquery-1.6.2.min.js"></script>
+<!-- if CDN fails, use local file -->
+<script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
+<script> window.mermaid || document.write('<script src="/./js/mermaid.min.js"><\/script>')</script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+
+<!-- 
+<script src="/assets/js/mermaid.min.js"></script>
+ -->
+<script>
+  $(document).ready(function () {
+    var mermaid_config = {
+      startOnLoad: true,
+      theme: 'dark',
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true
+      }
+    }
+    mermaid.initialize(mermaid_config);
+  });
+</script>
+
 
 </body>
 </html>

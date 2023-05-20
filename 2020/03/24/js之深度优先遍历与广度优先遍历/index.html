@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="keywords" content="hexo,个人博客,blog" />
+  <meta name="description" content="孙永镇个人博客" />
+  <meta http-equiv="x-dns-prefetch-control" content="on">
+  <link rel="dns-prefetch" href="https://busuanzi.ibruce.info">
+  
+  <link rel="dns-prefetch" href="https://widget.daovoice.io">
+  <link rel="dns-prefetch" href="https://widget-static-cdn.daovoice.io">
+  <link rel="dns-prefetch" href="https://im.daovoice.io">
+  
+  
+  <link rel="dns-prefetch" href="https://hm.baidu.com/">
+  
+  
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://api.github.com">
+  <link rel="dns-prefetch" href="https://avatars3.githubusercontent.com">
+  
+  <link rel="stylesheet" type="text/css" href="/./style/main.4a9772.css">
+	<link rel="shortcut icon" href="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg" title="Favicon">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+	<title>js之深度优先遍历与广度优先遍历</title>
+  
+  <script>var _hmt=_hmt||[];(function(){var hm=document.createElement("script");hm.src="https://hm.baidu.com/hm.js?1b5ca8bbd5cf95a2263942c7c20476d9";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(hm,s);})();
+  </script>
+  
+  
+    <script>(function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/123456.js","daovoice");daovoice('init',{app_id: "123456"});daovoice('update');
+  </script>
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+<body>
+<canvas id="pattern-placeholder" height="230"></canvas>
+<div class="navbar-header">
+  <a class="blog-title" href="/">码上就来</a>
+  <a class="face-img" href="/">
+    <img src="http://122.51.184.238/storage/api/v1/1_2_博客/2_7_avatar.jpeg">
+  </a>
+</div>
+<main>
+  <div class="article-title">
+    
+  
+  <h1 class="title">
+    js之深度优先遍历与广度优先遍历
+  </h1>
+  
+
+
+    <ul class="article-info">
+      <li>
+        发布
+        <time datetime="2020-03-24T02:46:04.000Z" itemprop="datePublished">2020-03-24</time>
+      </li>
+      <li>
+        
+    更新 <time datetime="2023-05-18T13:33:50.812Z" itemprop="dateUpdated">2023-05-18</time>
+
+      </li>
+      <li id="busuanzi_container_page_pv">
+        阅读 <span id="busuanzi_value_page_pv"></span>
+      </li>
+    </ul>
+  </div>
+  <div class="container">
+    <div class="article">
+      <div class="content">
+        <h2 id="什么是深度优先和广度优先">什么是深度优先和广度优先</h2>
+<p>1、概念：深度优先是自上而下的遍历搜索，广度优先则是逐层遍历。比如，现有如下树结构：</p>
+<pre class="mermaid">graph TD;
+  1((1))-->2-1
+  1((1))-->2-2
+  1((1))-->2-3
+  2-1((2-1))-->3-1((3-1))
+  2-1((2-1))-->3-2((3-2))
+  2-2((2-2))-->3-3((3-3))
+  2-3((2-3))-->3-4((3-4))</pre>
+<ul>
+<li>深度遍历优先的遍历顺序为：</li>
+</ul>
+<pre class="mermaid">graph LR;
+  1((1))-->2-1
+  2-1((2-1))-->3-1((3-1))
+  3-1((3-1))-->3-2((3-2))
+  3-2((3-2))-->2-2((2-2))
+  2-2((2-2))-->3-3((3-3))
+  3-3((3-3))-->2-3((2-3))
+  2-3((2-3))-->3-4((3-4))</pre>
+<ul>
+<li>广度遍历优先的遍历顺序为：</li>
+</ul>
+<pre class="mermaid">graph LR;
+  1((1))-->2-1
+  2-1((2-1))-->2-2((2-2))
+  2-2((2-2))-->2-3((2-3))
+  2-3((2-3))-->3-1((3-1))
+  3-1((3-1))-->3-2((3-2))
+  3-2((3-2))-->3-3((3-3))
+  3-3((3-3))-->3-4((3-4))</pre>
+<h2 id="代码实现">代码实现</h2>
+<p>1、现有如下树结构数据</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> tree = &#123;</span><br><span class="line">  <span class="attr">data</span>: &#123; <span class="attr">no</span>: <span class="number">1</span> &#125;,</span><br><span class="line">  <span class="attr">children</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">data</span>: &#123; <span class="attr">no</span>: <span class="number">2</span> <span class="number">.1</span> &#125;,</span><br><span class="line">      <span class="attr">children</span>: [</span><br><span class="line">        &#123; <span class="attr">data</span>: &#123; <span class="attr">no</span>: <span class="number">3.1</span> &#125;, <span class="attr">children</span>: [] &#125;,</span><br><span class="line">        &#123; <span class="attr">data</span>: &#123; <span class="attr">no</span>: <span class="number">3.2</span> &#125;, <span class="attr">children</span>: [] &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">data</span>: &#123; <span class="attr">no</span>: <span class="number">2.2</span> &#125;,</span><br><span class="line">      <span class="attr">children</span>: [</span><br><span class="line">        &#123; <span class="attr">data</span>: &#123; <span class="attr">no</span>: <span class="number">3.3</span> &#125;, <span class="attr">children</span>: [] &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">data</span>: &#123; <span class="attr">no</span>: <span class="number">2.3</span> &#125;,</span><br><span class="line">      <span class="attr">children</span>: [</span><br><span class="line">        &#123; <span class="attr">data</span>: &#123; <span class="attr">no</span>: <span class="number">3.4</span> &#125;, <span class="attr">children</span>: [] &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;,</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>深度优先遍历 采用递归遍历的方式</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">breadthFirst</span> (data) &#123;</span><br><span class="line">  <span class="keyword">let</span> result = [];</span><br><span class="line">  result.<span class="title function_">push</span>(data.<span class="property">data</span>.<span class="property">no</span>);</span><br><span class="line">  <span class="keyword">function</span> <span class="title function_">recursion</span> (data) &#123;</span><br><span class="line">    data.<span class="title function_">forEach</span>(<span class="function"><span class="params">item</span> =&gt;</span> &#123;</span><br><span class="line">      result.<span class="title function_">push</span>(item.<span class="property">data</span>.<span class="property">no</span>);</span><br><span class="line">      item.<span class="property">children</span> &amp;&amp; <span class="title function_">recursion</span>(item.<span class="property">children</span>);</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="title function_">recursion</span>(data.<span class="property">children</span>);</span><br><span class="line">  <span class="keyword">return</span> result.<span class="title function_">join</span>(<span class="string">&#x27;,&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>广度优先遍历 采用队列的方式 先进先出</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">depthFirst</span> (data) &#123;</span><br><span class="line">  <span class="keyword">let</span> result = [];</span><br><span class="line">  <span class="keyword">let</span> queue = data;</span><br><span class="line">  result.<span class="title function_">push</span>(queue.<span class="property">data</span>.<span class="property">no</span>);</span><br><span class="line">  <span class="keyword">while</span> (queue.<span class="property">children</span>.<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// first为数组queue.children的第一个值</span></span><br><span class="line">    <span class="keyword">const</span> first = queue.<span class="property">children</span>[<span class="number">0</span>];</span><br><span class="line">    result.<span class="title function_">push</span>(first.<span class="property">data</span>.<span class="property">no</span>);</span><br><span class="line">    <span class="comment">// 将第一个值的所有子节点push到数组queue.children的末尾 以达到一层一层遍历的效果</span></span><br><span class="line">    first.<span class="property">children</span> &amp;&amp; (queue.<span class="property">children</span>.<span class="title function_">push</span>(...first.<span class="property">children</span>));</span><br><span class="line">    <span class="comment">// 将数组queue.children的第一个值删除(已遍历)</span></span><br><span class="line">    queue.<span class="property">children</span>.<span class="title function_">shift</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> result.<span class="title function_">join</span>(<span class="string">&#x27;,&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      </div>
+        <div class="support-author">
+          <p>感谢您的阅读。 🙏
+          <a href="https://888.com/index.html" target="_blank">关于转载请看这里</a>
+            <!--<a class="btn-pay"  href="#pay-modal">¥ 打赏支持</a>-->
+          </p>
+        </div>
+        <!--
+            <div class="like ">
+              <div class="like-button">
+                <a id="like-note" href="">
+                  <i class="icon-heart"></i>喜欢
+                </a>
+              </div>
+              <span id="likes-count">256</span>
+            </div>
+        -->
+        <div class="otherLink">
+          <div class="previous">
+          </div>
+          <div class="next">
+          </div>
+        </div>
+        <div class="comments" id="comments">
+          
+<script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="/js/md5.min.js"></script>
+<script type="text/javascript">
+  const gitalk = new Gitalk({
+    clientID: '4008c278909d8497d8ad',
+    clientSecret: 'e27df4736052523348bbf856ba03e1d350143b93',
+    repo: 'YonSunZhen.github.io',
+    owner: 'YonSunZhen',
+    admin: ['YonSunZhen'],
+    id: md5(location.pathname),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false
+  })
+
+  gitalk.render('comments');
+</script>
+
+        </div>
+      </div>
+    </div>
+   </div>
+</main>
+<div class="footer">
+  <div class="info">
+    <p>
+    <a target="_blank" rel="noopener" href="https://hexo.io"> Hexo </a> 强力驱动|
+      <a target="_blank" rel="noopener" href="https://github.com/Youthink/hexo-themes-yearn"> Yearn </a>
+      主题
+    </p>
+    <p>
+      &copy;
+      <a href="http://beian.miit.gov.cn" target="_blank">YonSunZhen的个人博客 粤ICP备18135123号 </a> 
+    </p>  
+  </div>
+</div>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<!-- <script src="/./js/canvas-nest.js"></script> -->
+
+<script type="text/javascript" src="/./js/main.4a9772.js"></script>
+<script type="text/javascript" src="/./js/jquery-1.6.2.min.js"></script>
+<!-- if CDN fails, use local file -->
+<script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
+<script> window.mermaid || document.write('<script src="/./js/mermaid.min.js"><\/script>')</script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+
+<!-- 
+<script src="/assets/js/mermaid.min.js"></script>
+ -->
+<script>
+  $(document).ready(function () {
+    var mermaid_config = {
+      startOnLoad: true,
+      theme: 'dark',
+      flowchart: {
+        useMaxWidth: false,
+        htmlLabels: true
+      }
+    }
+    mermaid.initialize(mermaid_config);
+  });
+</script>
+
+
+</body>
+</html>
